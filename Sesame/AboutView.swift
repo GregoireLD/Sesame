@@ -1,0 +1,183 @@
+//
+//  AboutView.swift
+//  Sesame
+//
+//  Created by Greg on 2026-03-14.
+//
+
+import SwiftUI
+
+struct AboutView: View {
+
+    private let supportURL = URL(string: "https://duval.paris/sesame")!
+    private let privacyURL = URL(string: "https://duval.paris/sesame/privacy.html")!
+    private let tipURL = URL(string: "https://ko-fi.com/duvalparis")!
+
+    @Environment(LocationManager.self) private var locationManager
+    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
+        @State private var showingOnboarding = false
+    
+    @AppStorage("showHiddenFeatures") private var showHiddenFeatures = false
+    @State private var versionPressCount = 0
+    
+    private var appVersion: String {
+        Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "—"
+    }
+
+    private var buildNumber: String {
+        Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "—"
+    }
+
+    var body: some View {
+        NavigationStack {
+            List {
+                headerSection
+                descriptionSection
+                linksSection
+                privacySection
+                versionSection
+            }
+            .navigationTitle(Text("about.title"))
+            .navigationBarTitleDisplayMode(.inline)
+            .fullScreenCover(isPresented: $showingOnboarding) {
+                OnboardingView()
+                    .environment(locationManager)
+            }
+        }
+    }
+
+    // MARK: - Sections
+
+    private var headerSection: some View {
+        Section {
+            HStack {
+                Spacer()
+                VStack(spacing: 12) {
+                    Image("AppIconImage")
+                        .resizable()
+                        .frame(width: 80, height: 80)
+                        .clipShape(RoundedRectangle(cornerRadius: 18))
+                        .shadow(radius: 4)
+                    Text("app.name")
+                        .font(.title2)
+                        .fontWeight(.bold)
+                    Text("about.tagline")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                }
+                .padding(.vertical, 8)
+                Spacer()
+            }
+        }
+        .listRowBackground(Color.clear)
+    }
+
+    private var descriptionSection: some View {
+        Section {
+            Text("about.description")
+                .font(.body)
+                .foregroundStyle(.secondary)
+        }
+    }
+
+    private var linksSection: some View {
+        Section {
+            Link(destination: supportURL) {
+                Label {
+                    Text("about.support")
+                } icon: {
+                    Image(systemName: "questionmark.circle.fill")
+                        .foregroundStyle(.blue)
+                }
+            }
+            Link(destination: tipURL) {
+                Label {
+                    Text("about.tip")
+                } icon: {
+                    Image(systemName: "heart.fill")
+                        .foregroundStyle(.pink)
+                }
+            }
+        }
+    }
+
+    private var privacySection: some View {
+        Section {
+            Link(destination: privacyURL) {
+                Label {
+                    Text("about.privacy_policy")
+                } icon: {
+                    Image(systemName: "lock.shield.fill")
+                        .foregroundStyle(.green)
+                }
+            }
+            VStack(alignment: .leading, spacing: 4) {
+                Label {
+                    Text("about.privacy_statement")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                } icon: {
+                    Image(systemName: "checkmark.shield.fill")
+                        .foregroundStyle(.green)
+                        .font(.footnote)
+                }
+            }
+        } header: {
+            Text("about.privacy_header")
+        }
+    }
+
+    private var versionSection: some View {
+        Section {
+            HStack {
+                Text("about.version")
+                Spacer()
+                Text("\(appVersion) (\(buildNumber))")
+                    .foregroundStyle(.secondary)
+                    .font(.footnote)
+            }
+            .contentShape(Rectangle())
+            .onLongPressGesture(minimumDuration: 1.0) {
+                toggleHiddenFeatures()
+            }
+
+            if showHiddenFeatures {
+                Button {
+                    showingOnboarding = true
+                } label: {
+                    Label {
+                        Text("about.replay_onboarding")
+                    } icon: {
+                        Image(systemName: "arrow.counterclockwise.circle.fill")
+                            .foregroundStyle(.orange)
+                    }
+                }
+            }
+        } footer: {
+            HStack {
+                Spacer()
+                Text("about.credits")
+                    .font(.footnote)
+                    .foregroundStyle(.tertiary)
+                    .multilineTextAlignment(.center)
+                Spacer()
+            }
+            .padding(.top, 8)
+        }
+    }
+    
+    // MARK: - Logic
+    
+    private func toggleHiddenFeatures() {
+        let generator = UIImpactFeedbackGenerator(style: .medium)
+        generator.impactOccurred()
+        showHiddenFeatures.toggle()
+
+        // Second haptic pulse to confirm the new state
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+            let confirm = UIImpactFeedbackGenerator(style: showHiddenFeatures ? .heavy : .light)
+            confirm.impactOccurred()
+        }
+    }
+}
