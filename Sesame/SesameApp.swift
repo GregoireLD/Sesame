@@ -50,10 +50,6 @@ struct SesameApp: App {
         WindowGroup {
             ContentView(selectedEntryID: $selectedEntryID)
                 .environment(locationManager)
-                .onAppear {
-                    notificationManager.requestAuthorization()
-                    locationManager.requestAlwaysAuthorization()
-                }
                 .onOpenURL { url in
                     guard url.scheme == "sesame",
                           url.host == "import" else { return }
