@@ -12,6 +12,8 @@ struct OnboardingView: View {
     @Environment(LocationManager.self) private var locationManager
     @Environment(\.dismiss) private var dismiss
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
+    @AppStorage("locationBannerDismissed") private var locationBannerDismissed = false
+    @AppStorage("notificationBannerDismissed") private var notificationBannerDismissed = false
     @State private var currentPage = 0
 
     var body: some View {
@@ -21,8 +23,18 @@ struct OnboardingView: View {
                     .tag(0)
                 HowItWorksPage()
                     .tag(1)
-                PermissionsPage()
-                    .tag(2)
+                PermissionsPage(
+                    onGrant: {
+                        requestPermissions()
+                        withAnimation { currentPage = 3 }
+                    },
+                    onSkip: {
+                        locationBannerDismissed = true
+                        notificationBannerDismissed = true
+                        withAnimation { currentPage = 3 }
+                    }
+                )
+                .tag(2)
                 ExtraSecurityPage()
                     .tag(3)
                 ReadyPage {
@@ -33,6 +45,12 @@ struct OnboardingView: View {
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
             .ignoresSafeArea()
+            .onChange(of: currentPage) { oldPage, newPage in
+                // Swiping past step 3 (index 2) triggers permissions
+                if oldPage == 2 && newPage == 3 {
+                    requestPermissions()
+                }
+            }
 
             HStack(spacing: 8) {
                 ForEach(0..<5) { index in
@@ -51,6 +69,11 @@ struct OnboardingView: View {
             .padding(.bottom, 40)
         }
         .background(Color(.systemBackground))
+    }
+
+    private func requestPermissions() {
+        NotificationManager.shared.requestAuthorization()
+        locationManager.requestAlwaysAuthorization()
     }
 }
 
@@ -151,7 +174,8 @@ private struct HowItWorksPage: View {
 
 private struct PermissionsPage: View {
 
-    @Environment(LocationManager.self) private var locationManager
+    let onGrant: () -> Void
+    let onSkip: () -> Void
     @State private var didRequestPermissions = false
 
     var body: some View {
@@ -180,36 +204,31 @@ private struct PermissionsPage: View {
             }
             Spacer()
             VStack(spacing: 12) {
-                if !didRequestPermissions {
-                    Button {
-                        requestPermissions()
-                    } label: {
-                        Text("onboarding.permissions.button")
-                            .font(.headline)
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color.accentColor)
-                            .foregroundStyle(.white)
-                            .clipShape(RoundedRectangle(cornerRadius: 14))
-                    }
-                    .padding(.horizontal, 32)
-                } else {
-                    Label(
-                        String(localized: "onboarding.permissions.granted"),
-                        systemImage: "checkmark.circle.fill"
-                    )
-                    .foregroundStyle(.green)
-                    .font(.headline)
+                Button {
+                    didRequestPermissions = true
+                    onGrant()
+                } label: {
+                    Text("onboarding.permissions.button")
+                        .font(.headline)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.accentColor)
+                        .foregroundStyle(.white)
+                        .clipShape(RoundedRectangle(cornerRadius: 14))
                 }
+                .padding(.horizontal, 32)
+
+                Button {
+                    onSkip()
+                } label: {
+                    Text("onboarding.permissions.skip")
+                        .font(.footnote)
+                        .foregroundStyle(.tertiary)
+                }
+                .padding(.bottom, 8)
             }
             .padding(.bottom, 80)
         }
-    }
-
-    private func requestPermissions() {
-        NotificationManager.shared.requestAuthorization()
-        locationManager.requestAlwaysAuthorization()
-        didRequestPermissions = true
     }
 }
 

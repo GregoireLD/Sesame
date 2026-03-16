@@ -12,6 +12,9 @@ struct AboutView: View {
     private let supportURL = URL(string: "https://duval.paris/sesame")!
     private let privacyURL = URL(string: "https://duval.paris/sesame/privacy.html")!
     private let tipURL = URL(string: "https://ko-fi.com/duvalparis")!
+    
+    @AppStorage("locationBannerDismissed") private var locationBannerDismissed = false
+    @AppStorage("notificationBannerDismissed") private var notificationBannerDismissed = false
 
     @Environment(LocationManager.self) private var locationManager
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
@@ -99,6 +102,25 @@ struct AboutView: View {
                         .foregroundStyle(.pink)
                 }
             }
+            Button {
+                locationBannerDismissed = false
+                notificationBannerDismissed = false
+            } label: {
+                Label {
+                    Text("about.reset_permissions")
+                } icon: {
+                    Image(systemName: "hand.raised.fill")
+                        .foregroundStyle(.yellow)
+                }
+            }
+            Link(destination: URL(string: UIApplication.openSettingsURLString)!) {
+                Label {
+                    Text("about.open_settings")
+                } icon: {
+                    Image(systemName: "gear")
+                        .foregroundStyle(.gray)
+                }
+            }
         }
     }
 
@@ -150,7 +172,7 @@ struct AboutView: View {
                         Text("about.replay_onboarding")
                     } icon: {
                         Image(systemName: "arrow.counterclockwise.circle.fill")
-                            .foregroundStyle(.orange)
+                            .foregroundStyle(.purple)
                     }
                 }
             }

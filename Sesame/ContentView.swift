@@ -29,11 +29,16 @@ struct ContentView: View {
     @State private var showingAbout: Bool = false
     @State private var searchText: String = ""
     
+    @State private var notificationsAuthorized: Bool = true
+    
     init(selectedEntryID: Binding<String?> = .constant(nil)) {
         self._selectedEntryID = selectedEntryID
     }
 
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
+    @AppStorage("locationBannerDismissed") private var locationBannerDismissed = false
+    @AppStorage("notificationBannerDismissed") private var notificationBannerDismissed = false
+    
     @AppStorage("sortOrder") private var sortOrderRaw: String = SortOrder.alphabetical.rawValue
 
     private var sortOrder: SortOrder {
@@ -118,6 +123,11 @@ struct ContentView: View {
                 for: NSPersistentCloudKitContainer.eventChangedNotification
             )) { _ in
                 lastRefresh = .now
+            }
+            .onReceive(NotificationCenter.default.publisher(
+                for: UIApplication.didBecomeActiveNotification
+            )) { _ in
+                checkNotificationStatus()
             }
             .onChange(of: selectedEntryID) { _, newID in
                 guard let newID else { return }
@@ -245,6 +255,23 @@ struct ContentView: View {
             .opacity(isFutureVersion(code) ? 0.6 : 1.0)
         }
         .disabled(isFutureVersion(code))
+        .swipeActions(edge: .leading, allowsFullSwipe: true) {
+            if !isFutureVersion(code) {
+                Button {
+                    code.isSilenced = !(code.isSilenced ?? false)
+                } label: {
+                    Label(
+                        code.isSilenced == true
+                            ? String(localized: "entry.unmute")
+                            : String(localized: "entry.mute"),
+                        systemImage: code.isSilenced == true
+                            ? "bell.fill"
+                            : "bell.slash.fill"
+                    )
+                }
+                .tint(code.isSilenced == true ? .orange : .secondary)
+            }
+        }
     }
 
     private var emptyState: some View {
@@ -289,28 +316,64 @@ struct ContentView: View {
 
     @ViewBuilder
     private var authorizationBanner: some View {
-        if locationManager.authorizationStatus != .authorizedAlways {
-            VStack(spacing: 8) {
-                Label(
-                    String(localized: "permission.location.banner"),
-                    systemImage: "location.slash.fill"
+        VStack(spacing: 12) {
+            if locationManager.authorizationStatus != .authorizedAlways
+                && !locationBannerDismissed {
+                bannerView(
+                    icon: "location.slash.fill",
+                    message: String(localized: "permission.location.banner"),
+                    onSettings: {
+                        if let url = URL(string: UIApplication.openSettingsURLString) {
+                            UIApplication.shared.open(url)
+                        }
+                    },
+                    onDismiss: { locationBannerDismissed = true }
                 )
+            }
+            if !notificationsAuthorized && !notificationBannerDismissed {
+                bannerView(
+                    icon: "bell.slash.fill",
+                    message: String(localized: "permission.notification.banner"),
+                    onSettings: {
+                        if let url = URL(string: UIApplication.openSettingsURLString) {
+                            UIApplication.shared.open(url)
+                        }
+                    },
+                    onDismiss: { notificationBannerDismissed = true }
+                )
+            }
+        }
+        .padding(.horizontal)
+        .padding(.bottom, 8)
+        .onAppear { checkNotificationStatus() }
+    }
+
+    private func bannerView(
+        icon: String,
+        message: String,
+        onSettings: @escaping () -> Void,
+        onDismiss: @escaping () -> Void
+    ) -> some View {
+        VStack(spacing: 8) {
+            Label(message, systemImage: icon)
                 .font(.footnote)
                 .multilineTextAlignment(.center)
-                Button {
-                    if let url = URL(string: UIApplication.openSettingsURLString) {
-                        UIApplication.shared.open(url)
-                    }
-                } label: {
-                    Text("permission.open_settings")
+            HStack(spacing: 12) {
+                Button(String(localized: "permission.open_settings")) {
+                    onSettings()
                 }
                 .font(.footnote)
                 .buttonStyle(.bordered)
+                Button(String(localized: "action.dismiss")) {
+                    onDismiss()
+                }
+                .font(.footnote)
+                .buttonStyle(.bordered)
+                .tint(.secondary)
             }
-            .padding()
-            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
-            .padding()
         }
+        .padding()
+        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
     }
 
     // MARK: - Helpers
@@ -335,6 +398,14 @@ struct ContentView: View {
             return "••••"
         case .unknownVersion:
             return "?"
+        }
+    }
+    
+    private func checkNotificationStatus() {
+        UNUserNotificationCenter.current().getNotificationSettings { settings in
+            DispatchQueue.main.async {
+                notificationsAuthorized = settings.authorizationStatus == .authorized
+            }
         }
     }
 
