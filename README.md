@@ -35,6 +35,13 @@ Location data is used solely for geofencing and is never logged, stored, or tran
 - Xcode 26+
 - Active Apple Developer account for building
 
+## Building
+
+1. Clone the repository
+2. Open `Sesame.xcodeproj` in Xcode 26+
+3. Set your Development Team in **Signing & Capabilities**
+4. Build and run on a device or simulator
+
 ## Support
 
 - **Website**: [duval.paris/sesame](https://duval.paris/sesame)
