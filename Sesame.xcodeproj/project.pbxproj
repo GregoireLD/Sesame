@@ -11,7 +11,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		3717D82A2F659B3F00ABF57A /* Exceptions for "Sesame" folder in "Sesame" target */ = {
+		37AED4142F682FBA00DB42A1 /* Exceptions for "Sesame" folder in "Sesame" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
@@ -24,7 +24,7 @@
 		37EEEF752F624D370042F68F /* Sesame */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				3717D82A2F659B3F00ABF57A /* Exceptions for "Sesame" folder in "Sesame" target */,
+				37AED4142F682FBA00DB42A1 /* Exceptions for "Sesame" folder in "Sesame" target */,
 			);
 			path = Sesame;
 			sourceTree = "<group>";
@@ -65,7 +65,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 37EEEF812F624D390042F68F /* Build configuration list for PBXNativeTarget "Sesame" */;
 			buildPhases = (
-				37AED31E2F68206E00DB42A1 /* Auto-increment build number */,
 				37EEEF6F2F624D370042F68F /* Sources */,
 				37EEEF702F624D370042F68F /* Frameworks */,
 				37EEEF712F624D370042F68F /* Resources */,
@@ -129,28 +128,6 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
-/* Begin PBXShellScriptBuildPhase section */
-		37AED31E2F68206E00DB42A1 /* Auto-increment build number */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Auto-increment build number";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to inse# Use git commit count as build number\n# This is always incrementing and requires no manual intervention\n\n# if git -C \"${SRCROOT}\" rev-parse --is-inside-work-tree > /dev/null 2>&1; then\n#    BUILD_NUMBER=$(git -C \"${SRCROOT}\" rev-list --count HEAD)\n#    /usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $BUILD_NUMBER\" \"${TARGET_BUILD_DIR}/${INFOPLIST_PATH}\"\n# else\n    echo \"warning: Not a git repository, skipping build number increment\"\nfirt its path.\n";
-		};
-/* End PBXShellScriptBuildPhase section */
-
 /* Begin PBXSourcesBuildPhase section */
 		37EEEF6F2F624D370042F68F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -170,9 +147,10 @@
 				CODE_SIGN_ENTITLEMENTS = Sesame/Sesame.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 12;
+				CURRENT_PROJECT_VERSION = 13;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Sesame/Info.plist;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
@@ -208,9 +186,10 @@
 				CODE_SIGN_ENTITLEMENTS = Sesame/Sesame.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 12;
+				CURRENT_PROJECT_VERSION = 13;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Sesame/Info.plist;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
