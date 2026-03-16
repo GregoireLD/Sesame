@@ -15,6 +15,7 @@ struct OnboardingView: View {
     @AppStorage("locationBannerDismissed") private var locationBannerDismissed = false
     @AppStorage("notificationBannerDismissed") private var notificationBannerDismissed = false
     @State private var currentPage = 0
+    @State private var skipped = false
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -31,6 +32,7 @@ struct OnboardingView: View {
                     onSkip: {
                         locationBannerDismissed = true
                         notificationBannerDismissed = true
+                        skipped = true
                         withAnimation { currentPage = 3 }
                     }
                 )
@@ -46,9 +48,12 @@ struct OnboardingView: View {
             .tabViewStyle(.page(indexDisplayMode: .never))
             .ignoresSafeArea()
             .onChange(of: currentPage) { oldPage, newPage in
-                // Swiping past step 3 (index 2) triggers permissions
                 if oldPage == 2 && newPage == 3 {
-                    requestPermissions()
+                    if skipped {
+                        skipped = false // reset for next time
+                    } else {
+                        requestPermissions()
+                    }
                 }
             }
 
