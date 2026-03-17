@@ -337,6 +337,7 @@ struct ContentView: View {
                     icon: "bell.slash.fill",
                     message: String(localized: "permission.notification.banner"),
                     onSettings: {
+                        NotificationManager.shared.requestAuthorization()
                         if let url = URL(string: UIApplication.openSettingsURLString) {
                             UIApplication.shared.open(url)
                         }
