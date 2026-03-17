@@ -33,7 +33,8 @@ struct ImportExport {
         for accessCode: AccessCode,
         includeRadius: Bool = false,
         includeLocationDetails: Bool = false,
-        includeComment: Bool = false
+        includeComment: Bool = false,
+        useLegacyScheme: Bool = false
     ) -> URL? {
         guard let label = accessCode.label,
               let code = accessCode.code,
@@ -48,8 +49,14 @@ struct ImportExport {
         }
 
         var components = URLComponents()
-        components.scheme = "sesame"
-        components.host = "import"
+        if useLegacyScheme {
+            components.scheme = "sesame"
+            components.host = "import"
+        } else {
+            components.scheme = "https"
+            components.host = "duval.paris"
+            components.path = "/sesame/share"
+        }
 
         var items: [URLQueryItem] = [
             URLQueryItem(name: "v", value: "1"),
@@ -84,7 +91,16 @@ struct ImportExport {
             }
         }
 
-        components.queryItems = items
+        if useLegacyScheme {
+            // sesame:// uses query parameters as before
+            components.queryItems = items
+        } else {
+            var fragmentComponents = URLComponents()
+            fragmentComponents.queryItems = items
+            guard let encodedQuery = fragmentComponents.percentEncodedQuery else { return nil }
+            let urlString = "https://duval.paris/sesame/share#\(encodedQuery)"
+            return URL(string: urlString)
+        }
         return components.url
     }
 
@@ -109,12 +125,30 @@ struct ImportExport {
     // MARK: - Import: URL Parsing
 
     static func parse(url: URL) -> ParsedImport? {
-        guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
-              let items = components.queryItems else { return nil }
-
-        func param(_ name: String) -> String? {
-            items.first(where: { $0.name == name })?.value
+        // For https:// Universal Links, parameters are in the fragment
+        // For sesame:// legacy scheme, parameters are in query items
+        let paramString: String?
+        if url.scheme == "https" {
+            paramString = url.fragment
+        } else {
+            paramString = url.query
         }
+
+        guard let paramString,
+              !paramString.isEmpty else { return nil }
+
+        // Parse the parameter string manually
+        var paramDict: [String: String] = [:]
+        paramString.split(separator: "&").forEach { pair in
+            let parts = pair.split(separator: "=", maxSplits: 1)
+            if parts.count == 2,
+               let key = parts[0].removingPercentEncoding,
+               let value = parts[1].removingPercentEncoding {
+                paramDict[key] = value
+            }
+        }
+
+        func param(_ name: String) -> String? { paramDict[name] }
 
         let version = param("v") ?? "1"
         guard version == "1" else { return nil }

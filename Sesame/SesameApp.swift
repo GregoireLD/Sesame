@@ -51,9 +51,13 @@ struct SesameApp: App {
             ContentView(selectedEntryID: $selectedEntryID)
                 .environment(locationManager)
                 .onOpenURL { url in
-                    guard url.scheme == "sesame",
-                          url.host == "import" else { return }
-                    importURL = url
+                    if url.scheme == "sesame", url.host == "import" {
+                        importURL = url
+                    } else if url.scheme == "https",
+                              url.host == "duval.paris",
+                              url.path == "/sesame/share" {
+                        importURL = url
+                    }
                 }
                 .sheet(item: $importURL) { url in
                     if let parsed = ImportExport.parse(url: url) {

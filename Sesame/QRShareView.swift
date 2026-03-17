@@ -20,6 +20,9 @@ struct QRShareView: View {
     @State private var includeRadius: Bool = false
     @State private var includeLocationDetails: Bool = false
     @State private var includeComment: Bool = false
+    
+    @AppStorage("showHiddenFeatures") private var showHiddenFeatures = false
+    @AppStorage("qrUseLegacyScheme") private var useLegacyScheme: Bool = false
 
     var body: some View {
         NavigationStack {
@@ -101,6 +104,16 @@ struct QRShareView: View {
                 Image(systemName: "exclamationmark.shield.fill")
                     .foregroundStyle(.orange)
             }
+            if useLegacyScheme {
+                Label {
+                    Text("qr.warning.legacy_scheme")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                } icon: {
+                    Image(systemName: "person.crop.circle.badge.xmark")
+                        .foregroundStyle(.red)
+                }
+            }
         }
     }
 
@@ -151,6 +164,19 @@ struct QRShareView: View {
                         .foregroundStyle(.secondary)
                 }
             }
+            if showHiddenFeatures {
+                Toggle(isOn: Binding(
+                    get: { useLegacyScheme },
+                    set: { useLegacyScheme = $0; generate() }
+                )) {
+                    Label {
+                        Text("qr.option.legacy_scheme")
+                    } icon: {
+                        Image(systemName: "link.badge.plus")
+                            .foregroundStyle(.purple)
+                    }
+                }
+            }
         } header: {
             Text("qr.options_header")
         } footer: {
@@ -163,7 +189,8 @@ struct QRShareView: View {
             for: accessCode,
             includeRadius: includeRadius,
             includeLocationDetails: includeLocationDetails,
-            includeComment: includeComment
+            includeComment: includeComment,
+            useLegacyScheme: useLegacyScheme
         ) else {
             generationFailed = true
             return
