@@ -111,6 +111,14 @@
 				en,
 				Base,
 				fr,
+				de,
+				es,
+				it,
+				ja,
+				ko,
+				"zh-Hans",
+				"zh-Hant",
+				ar,
 			);
 			mainGroup = 37EEEF6A2F624D370042F68F;
 			minimizedProjectReferenceProxies = 1;
@@ -154,7 +162,7 @@
 				CODE_SIGN_ENTITLEMENTS = Sesame/Sesame.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 17;
+				CURRENT_PROJECT_VERSION = 18;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -193,7 +201,7 @@
 				CODE_SIGN_ENTITLEMENTS = Sesame/Sesame.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 17;
+				CURRENT_PROJECT_VERSION = 18;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;

@@ -39,35 +39,32 @@ struct ContentView: View {
     @AppStorage("locationBannerDismissed") private var locationBannerDismissed = false
     @AppStorage("notificationBannerDismissed") private var notificationBannerDismissed = false
     
-    @AppStorage("sortOrder") private var sortOrderRaw: String = SortOrder.alphabetical.rawValue
+    @AppStorage("sortOrder") private var sortOrderRaw: String = SortOrder.byDistance.rawValue
 
     private var sortOrder: SortOrder {
         SortOrder(rawValue: sortOrderRaw) ?? .alphabetical
     }
+    
+    private var canSortByDistance: Bool {
+        locationManager.authorizationStatus == .authorizedAlways
+            || locationManager.authorizationStatus == .authorizedWhenInUse
+    }
+
+    private var effectiveSortByDistance: Bool {
+        sortOrder == .byDistance && canSortByDistance
+    }
 
     private var sortedCodes: [AccessCode] {
-        switch sortOrder {
-        case .alphabetical:
+        if effectiveSortByDistance,
+           let location = locationManager.currentLocation {
             return accessCodes.sorted {
-                ($0.label ?? "") < ($1.label ?? "")
-            }
-        case .byDistance:
-            guard let location = locationManager.currentLocation else {
-                return accessCodes.sorted {
-                    ($0.label ?? "") < ($1.label ?? "")
-                }
-            }
-            return accessCodes.sorted {
-                let loc0 = CLLocation(
-                    latitude: $0.latitude ?? 0,
-                    longitude: $0.longitude ?? 0
-                )
-                let loc1 = CLLocation(
-                    latitude: $1.latitude ?? 0,
-                    longitude: $1.longitude ?? 0
-                )
+                let loc0 = CLLocation(latitude: $0.latitude ?? 0, longitude: $0.longitude ?? 0)
+                let loc1 = CLLocation(latitude: $1.latitude ?? 0, longitude: $1.longitude ?? 0)
                 return location.distance(from: loc0) < location.distance(from: loc1)
             }
+        }
+        return accessCodes.sorted {
+            ($0.label ?? "") < ($1.label ?? "")
         }
     }
     
@@ -154,7 +151,7 @@ struct ContentView: View {
     private var sortButton: some View {
         Menu {
             Button {
-                    showingAbout = true
+                showingAbout = true
             } label: {
                 Label(
                     String(localized: "about.title"),
@@ -183,10 +180,15 @@ struct ContentView: View {
                 )
             }
         } label: {
-            Image(systemName: sortOrder == .byDistance
-                ? "location.fill"
-                : "textformat.abc"
-            )
+            // Show slash icon when preference is distance but location unavailable
+            if sortOrder == .byDistance && !canSortByDistance {
+                Image(systemName: "location.slash.fill")
+                    .foregroundStyle(.secondary)
+            } else if effectiveSortByDistance {
+                Image(systemName: "location.fill")
+            } else {
+                Image(systemName: "textformat.abc")
+            }
         }
     }
 
@@ -236,7 +238,7 @@ struct ContentView: View {
                                         .font(.caption)
                                 }
                     }
-                    if sortOrder == .byDistance,
+                    if effectiveSortByDistance,
                        let location = locationManager.currentLocation,
                        let lat = code.latitude,
                        let lon = code.longitude {
