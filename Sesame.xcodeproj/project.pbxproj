@@ -7,10 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3725A7842F6A1FE300ADEBD0 /* share.php in Resources */ = {isa = PBXBuildFile; fileRef = 3725A7832F6A1FE300ADEBD0 /* share.php */; };
 		37AED4392F683C3000DB42A1 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 37AED4382F683C3000DB42A1 /* README.md */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3725A7832F6A1FE300ADEBD0 /* share.php */ = {isa = PBXFileReference; lastKnownFileType = text.script.php; path = share.php; sourceTree = "<group>"; };
 		37AED4382F683C3000DB42A1 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		37EEEF732F624D370042F68F /* Sesame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Sesame.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -50,6 +52,7 @@
 		37EEEF6A2F624D370042F68F = {
 			isa = PBXGroup;
 			children = (
+				3725A7832F6A1FE300ADEBD0 /* share.php */,
 				37AED4382F683C3000DB42A1 /* README.md */,
 				37EEEF752F624D370042F68F /* Sesame */,
 				37EEEF742F624D370042F68F /* Products */,
@@ -137,6 +140,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3725A7842F6A1FE300ADEBD0 /* share.php in Resources */,
 				37AED4392F683C3000DB42A1 /* README.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
