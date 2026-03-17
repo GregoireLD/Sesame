@@ -337,9 +337,25 @@ struct ContentView: View {
                     icon: "bell.slash.fill",
                     message: String(localized: "permission.notification.banner"),
                     onSettings: {
-                        NotificationManager.shared.requestAuthorization()
-                        if let url = URL(string: UIApplication.openSettingsURLString) {
-                            UIApplication.shared.open(url)
+                        UNUserNotificationCenter.current().getNotificationSettings { settings in
+                            DispatchQueue.main.async {
+                                switch settings.authorizationStatus {
+                                case .notDetermined:
+                                    // Never asked — show the native dialog, no need for Settings
+                                    NotificationManager.shared.requestAuthorization()
+                                case .denied:
+                                    // Previously denied — must go to Settings
+                                    if let url = URL(string: UIApplication.openSettingsURLString) {
+                                        UIApplication.shared.open(url)
+                                    }
+                                default:
+                                    // authorized, provisional, ephemeral — shouldn't be here
+                                    // but open Settings anyway as a safe fallback
+                                    if let url = URL(string: UIApplication.openSettingsURLString) {
+                                        UIApplication.shared.open(url)
+                                    }
+                                }
+                            }
                         }
                     },
                     onDismiss: { notificationBannerDismissed = true }
