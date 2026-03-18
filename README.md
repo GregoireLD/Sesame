@@ -26,7 +26,7 @@ All sensitive fields (access codes, location details, notes) are encrypted on yo
 
 Location data is used solely for geofencing and is never logged, stored, or transmitted. Silenced entries are excluded from location monitoring entirely.
 
-[Read the full privacy policy](https://duval.paris/sesame/privacy.html)
+[Read the full privacy policy](https://duval.paris/sesame/privacy.php)
 
 ## Requirements
 

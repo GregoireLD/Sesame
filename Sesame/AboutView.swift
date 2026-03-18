@@ -10,7 +10,7 @@ import SwiftUI
 struct AboutView: View {
 
     private let supportURL = URL(string: "https://duval.paris/sesame")!
-    private let privacyURL = URL(string: "https://duval.paris/sesame/privacy.html")!
+    private let privacyURL = URL(string: "https://duval.paris/sesame/privacy.php")!
     private let tipURL = URL(string: "https://ko-fi.com/duvalparis")!
     
     @AppStorage("locationBannerDismissed") private var locationBannerDismissed = false
