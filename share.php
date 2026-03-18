@@ -1,16 +1,41 @@
+<?php
+$langs = [
+  'fr' => ['title' => 'Sesame — Code d\'accès partagé', 'desc' => 'Quelqu\'un a partagé un code d\'accès avec vous. Ouvrez pour le voir.'],
+  'de' => ['title' => 'Sesame — Geteilter Zugangscode', 'desc' => 'Jemand hat einen Zugangscode mit dir geteilt. Öffnen, um ihn anzuzeigen.'],
+  'es' => ['title' => 'Sesame — Código de acceso compartido', 'desc' => 'Alguien ha compartido un código de acceso contigo. Ábrelo para verlo.'],
+  'it' => ['title' => 'Sesame — Codice di accesso condiviso', 'desc' => 'Qualcuno ha condiviso un codice di accesso con te. Aprilo per vederlo.'],
+  'ja' => ['title' => 'Sesame — アクセスコードが共有されました', 'desc' => 'アクセスコードが共有されました。開いて確認してください。'],
+  'ko' => ['title' => 'Sesame — 출입 코드가 공유되었습니다', 'desc' => '누군가 출입 코드를 공유했습니다. 열어서 확인하세요.'],
+  'zh' => ['title' => 'Sesame — 共享的门禁代码', 'desc' => '有人与您共享了门禁代码。打开查看。'],
+  'ar' => ['title' => 'Sesame — رمز دخول مشترك', 'desc' => 'شارك شخص ما رمز دخول معك. افتحه لرؤيته.'],
+];
+
+$title = 'Sesame — Shared Access Code';
+$desc  = 'Someone shared an access code with you. Open to view it.';
+$url   = 'https://duval.paris/sesame/share';
+
+$accept = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '';
+foreach ($langs as $code => $strings) {
+  if (stripos($accept, $code) !== false) {
+    $title = $strings['title'];
+    $desc  = $strings['desc'];
+    break;
+  }
+}
+?>
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sesame — Shared Access Code</title>
-  <meta name="description" content="Someone shared an access code with you via Sesame." />
 
-  <!-- Open Graph — generic, no parameters exposed -->
-  <meta property="og:title" content="Sesame — Shared Access Code" />
-  <meta property="og:description" content="Someone shared an access code with you. Open to view it." />
+  <title><?= htmlspecialchars($title) ?></title>
+  <meta name="description" content="<?= htmlspecialchars($desc) ?>" />
+  <meta property="og:title" content="<?= htmlspecialchars($title) ?>" />
+  <meta property="og:description" content="<?= htmlspecialchars($desc) ?>" />
+  <meta property="og:url" content="<?= htmlspecialchars($url) ?>" />
+
   <meta property="og:image" content="https://duval.paris/sesame/images/sesame_social.png" />
-  <meta property="og:url" content="https://duval.paris/sesame/share" />
   <meta property="og:type" content="website" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:image" content="https://duval.paris/sesame/images/sesame_social.png" />
@@ -621,8 +646,8 @@
         ${extraFields ? `<div class="extra-fields">${extraFields}</div>` : ''}
       </div>
       <div class="actions">
-        <a href="${sesameURL}" class="btn-primary">${iconApple} ${t('add_to_sesame')}</a>
-        <a href="${APP_STORE_URL}" class="btn-secondary">${t('download')}</a>
+        <a href="${sesameURL}" class="btn-primary">${t('add_to_sesame')}</a>
+        ${downloadBtn}
       </div>
       <p class="note">
         ${t('note')}<br>
