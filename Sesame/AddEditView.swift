@@ -95,6 +95,7 @@ struct AddEditView: View {
     private var labelSection: some View {
         Section {
             TextField(String(localized: "label.placeholder"), text: $label)
+                .textContentType(.oneTimeCode)
         } header: {
             Text("label.header")
         } footer: {
@@ -107,12 +108,14 @@ struct AddEditView: View {
             HStack {
                 if showingCode {
                     TextField(String(localized: "code.placeholder"), text: $code)
-                        .textContentType(.none)
                         .autocorrectionDisabled()
                         .autocapitalization(.none)
+                        .textContentType(.oneTimeCode)
+                        .id("code-visible")
                 } else {
                     SecureField(String(localized: "code.placeholder"), text: $code)
-                        .textContentType(.none)
+                        .textContentType(.oneTimeCode)
+                        .id("code-hidden")
                 }
                 Spacer()
                 Button {
