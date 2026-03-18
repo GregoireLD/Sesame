@@ -107,8 +107,12 @@ struct AddEditView: View {
             HStack {
                 if showingCode {
                     TextField(String(localized: "code.placeholder"), text: $code)
+                        .textContentType(.none)
+                        .autocorrectionDisabled()
+                        .autocapitalization(.none)
                 } else {
                     SecureField(String(localized: "code.placeholder"), text: $code)
+                        .textContentType(.none)
                 }
                 Spacer()
                 Button {
