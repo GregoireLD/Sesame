@@ -101,10 +101,23 @@ private struct UnknownImportView: View {
     @Environment(\.dismiss) private var dismiss
 
     private var isFutureVersion: Bool {
-        guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
-              let version = components.queryItems?.first(where: { $0.name == "v" })?.value,
-              let v = Int(version) else { return false }
-        return v > 1
+        // Check query items (sesame:// scheme)
+        if let components = URLComponents(url: url, resolvingAgainstBaseURL: false) {
+            let source = url.scheme == "https"
+                ? components.fragment
+                : components.queryItems.map { items in
+                    items.map { "\($0.name)=\($0.value ?? "")" }.joined(separator: "&")
+                }
+            if let paramString = source {
+                let version = paramString
+                    .split(separator: "&")
+                    .first(where: { $0.hasPrefix("v=") })
+                    .flatMap { $0.split(separator: "=").last }
+                    .flatMap { Int($0) }
+                return (version ?? 1) > 1
+            }
+        }
+        return false
     }
 
     var body: some View {

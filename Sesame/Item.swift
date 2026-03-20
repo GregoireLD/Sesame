@@ -24,12 +24,12 @@ final class AccessCode {
 
     init(
         label: String,
-        code: String,
-        address: String,
-        latitude: Double,
-        longitude: Double,
+        code: String? = nil,
+        address: String? = nil,
+        latitude: Double? = nil,
+        longitude: Double? = nil,
         radiusMeters: Double = 100.0,
-        isSilenced: Bool,
+        isSilenced: Bool = false,
         locationDetails: String? = nil,
         comment: String? = nil
     ) {
@@ -40,6 +40,7 @@ final class AccessCode {
         self.latitude = latitude
         self.longitude = longitude
         self.radiusMeters = radiusMeters
+        self.isSilenced = isSilenced
         self.locationDetails = locationDetails
         self.comment = comment
         self.schemaVersion = 3

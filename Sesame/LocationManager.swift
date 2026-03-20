@@ -115,7 +115,11 @@ final class LocationManager: NSObject, CLLocationManagerDelegate {
     func recalculateActiveSet() {
         guard !allAccessCodes.isEmpty else { return }
 
-        let activeCodes = allAccessCodes.filter { $0.isSilenced != true }
+        let activeCodes = allAccessCodes.filter {
+            $0.isSilenced != true
+            && $0.latitude != nil
+            && $0.longitude != nil
+        }
         let sorted: [AccessCode]
         if let location = currentLocation {
             sorted = activeCodes.sorted {

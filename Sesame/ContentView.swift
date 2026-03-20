@@ -237,6 +237,11 @@ struct ContentView: View {
                                         .foregroundStyle(.tertiary)
                                         .font(.caption)
                                 }
+                        if code.latitude == nil && code.longitude == nil {
+                            Image(systemName: "location.slash.fill")
+                                .foregroundStyle(.orange)
+                                .font(.caption)
+                        }
                     }
                     if effectiveSortByDistance,
                        let location = locationManager.currentLocation,

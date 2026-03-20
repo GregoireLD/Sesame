@@ -22,7 +22,9 @@ struct QRShareView: View {
     @State private var includeComment: Bool = false
     
     @AppStorage("showHiddenFeatures") private var showHiddenFeatures = false
+    @AppStorage("qrIncludeCoordinates") private var includeCoordinates: Bool = true
     @AppStorage("qrUseLegacyScheme") private var useLegacyScheme: Bool = false
+    
 
     var body: some View {
         NavigationStack {
@@ -166,6 +168,17 @@ struct QRShareView: View {
             }
             if showHiddenFeatures {
                 Toggle(isOn: Binding(
+                    get: { !includeCoordinates },
+                    set: { includeCoordinates = !$0; generate() }
+                )) {
+                    Label {
+                        Text("qr.option.exclude_coordinates")
+                    } icon: {
+                        Image(systemName: "location.slash.fill")
+                            .foregroundStyle(.purple)
+                    }
+                }
+                Toggle(isOn: Binding(
                     get: { useLegacyScheme },
                     set: { useLegacyScheme = $0; generate() }
                 )) {
@@ -190,6 +203,7 @@ struct QRShareView: View {
             includeRadius: includeRadius,
             includeLocationDetails: includeLocationDetails,
             includeComment: includeComment,
+            includeCoordinates: includeCoordinates,
             useLegacyScheme: useLegacyScheme
         ) else {
             generationFailed = true

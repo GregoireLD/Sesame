@@ -1,5 +1,5 @@
 //
-//  QRCodeGenerator.swift
+//  ImportExport.swift
 //  Sesame
 //
 //  Created by Greg on 2026-03-16.
@@ -15,12 +15,14 @@ import MapKit
 
 struct ParsedImport {
     let label: String
-    let address: String
-    let code: String
+    let address: String?
+    let code: String?
     let radiusMeters: Double?
     let locationDetails: String?
     let comment: String?
     let isSilenced: Bool
+    let latitude: Double?
+    let longitude: Double?
 }
 
 // MARK: - ImportExport
@@ -34,18 +36,22 @@ struct ImportExport {
         includeRadius: Bool = false,
         includeLocationDetails: Bool = false,
         includeComment: Bool = false,
+        includeCoordinates: Bool = true,
         useLegacyScheme: Bool = false
     ) -> URL? {
-        guard let label = accessCode.label,
-              let code = accessCode.code,
-              let address = accessCode.address else { return nil }
+        guard let label = accessCode.label else { return nil }
 
-        let plainCode: String
-        switch CryptoManager.decrypt(code) {
-        case .success(let plain), .legacyPlainText(let plain):
-            plainCode = plain
-        default:
-            return nil
+        // code is now optional
+        let plainCode: String?
+        if let storedCode = accessCode.code {
+            switch CryptoManager.decrypt(storedCode) {
+            case .success(let plain), .legacyPlainText(let plain):
+                plainCode = plain
+            default:
+                return nil
+            }
+        } else {
+            plainCode = nil
         }
 
         var components = URLComponents()
@@ -61,9 +67,24 @@ struct ImportExport {
         var items: [URLQueryItem] = [
             URLQueryItem(name: "v", value: "1"),
             URLQueryItem(name: "label", value: label),
-            URLQueryItem(name: "address", value: address),
-            URLQueryItem(name: "code", value: plainCode)
         ]
+
+        // address is optional — only include if present
+        if let address = accessCode.address {
+            items.append(URLQueryItem(name: "address", value: address))
+        }
+
+        // code is optional — only include if present
+        if let plainCode {
+            items.append(URLQueryItem(name: "code", value: plainCode))
+        }
+
+        if includeCoordinates,
+           let lat = accessCode.latitude,
+           let lon = accessCode.longitude {
+            items.append(URLQueryItem(name: "lat", value: String(format: "%.5f", lat)))
+            items.append(URLQueryItem(name: "lon", value: String(format: "%.5f", lon)))
+        }
 
         if includeRadius, let radius = accessCode.radiusMeters {
             items.append(URLQueryItem(name: "radius", value: String(radius)))
@@ -92,8 +113,8 @@ struct ImportExport {
         }
 
         if useLegacyScheme {
-            // sesame:// uses query parameters as before
             components.queryItems = items
+            return components.url
         } else {
             var fragmentComponents = URLComponents()
             fragmentComponents.queryItems = items
@@ -101,7 +122,6 @@ struct ImportExport {
             let urlString = "https://duval.paris/sesame/share#\(encodedQuery)"
             return URL(string: urlString)
         }
-        return components.url
     }
 
     // MARK: - Export: QR Image Generation
@@ -154,18 +174,18 @@ struct ImportExport {
         guard version == "1" else { return nil }
 
         guard let label = param("label"),
-              let address = param("address"),
-              let code = param("code"),
-              !label.isEmpty, !address.isEmpty, !code.isEmpty else { return nil }
+              !label.isEmpty else { return nil }
 
         return ParsedImport(
             label: label,
-            address: address,
-            code: code,
+            address: param("address"),
+            code: param("code"),
             radiusMeters: param("radius").flatMap { Double($0) },
             locationDetails: param("details"),
             comment: param("comment"),
-            isSilenced: param("silenced") == "1"
+            isSilenced: param("silenced") == "1",
+            latitude: param("lat").flatMap { Double($0) },
+            longitude: param("lon").flatMap { Double($0) }
         )
     }
 }
