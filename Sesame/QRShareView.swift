@@ -46,8 +46,8 @@ struct QRShareView: View {
             .onChange(of: includeLocationDetails) { _, _ in generate() }
             .onChange(of: includeComment) { _, _ in generate() }
             .sheet(isPresented: $showingShareSheet) {
-                if let url = shareURL, let image = qrImage {
-                    ShareSheet(items: [url.absoluteString, image])
+                if let urlObj = shareURL {
+                    ShareSheet(url: urlObj.absoluteString)
                 }
             }
         }
@@ -131,7 +131,7 @@ struct QRShareView: View {
                         .foregroundStyle(.blue)
                 }
             }
-            .disabled(qrImage == nil || shareURL == nil)
+            .disabled(shareURL == nil)
         } footer: {
             Text("qr.share_footer")
                 .font(.footnote)
@@ -221,10 +221,10 @@ struct QRShareView: View {
 // MARK: - ShareSheet
 
 struct ShareSheet: UIViewControllerRepresentable {
-    let items: [Any]
+    let url: String
 
     func makeUIViewController(context: Context) -> UIActivityViewController {
-        UIActivityViewController(activityItems: items, applicationActivities: nil)
+        UIActivityViewController(activityItems: [url], applicationActivities: nil)
     }
 
     func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
