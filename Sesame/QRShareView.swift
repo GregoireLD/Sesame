@@ -47,7 +47,7 @@ struct QRShareView: View {
             .onChange(of: includeComment) { _, _ in generate() }
             .sheet(isPresented: $showingShareSheet) {
                 if let url = shareURL, let image = qrImage {
-                    ShareSheet(items: [url, image])
+                    ShareSheet(items: [url.absoluteString, image])
                 }
             }
         }
