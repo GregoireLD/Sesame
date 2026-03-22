@@ -13,6 +13,8 @@ struct AboutView: View {
     private let privacyURL = URL(string: "https://duval.paris/sesame/privacy.php")!
     private let tipURL = URL(string: "https://ko-fi.com/duvalparis")!
     
+    @Environment(\.dismiss) private var dismiss
+    
     @AppStorage("locationBannerDismissed") private var locationBannerDismissed = false
     @AppStorage("notificationBannerDismissed") private var notificationBannerDismissed = false
 
@@ -39,6 +41,14 @@ struct AboutView: View {
                 linksSection
                 privacySection
                 versionSection
+            }
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("action.close", systemImage: "xmark.circle.fill") {
+                        dismiss()
+                    }
+                    .foregroundStyle(.secondary)
+                }
             }
             .navigationTitle(Text("about.title"))
             .navigationBarTitleDisplayMode(.inline)
