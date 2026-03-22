@@ -106,7 +106,7 @@ struct ContentView: View {
                     .environment(locationManager)
             }
             .sheet(item: $selectedCode) { code in
-                AddEditView(existingCode: code)
+                EntryDetailView(accessCode: code)
                     .environment(locationManager)
             }
             .sheet(isPresented: $showingAbout) {

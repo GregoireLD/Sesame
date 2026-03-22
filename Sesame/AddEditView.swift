@@ -33,14 +33,10 @@ struct AddEditView: View {
     @State private var geocodingSuccess: Bool = false
     @State private var showingCode: Bool = false
     @State private var keyUnavailable: Bool = false
-    @State private var showingQRShare: Bool = false
     @State private var showingUnresolvedWarning: Bool = false
-    @State private var showingUnsavedChangesAlert: Bool = false
     @State private var showingClipboardError: Bool = false
-    @State private var hasUnsavedChanges: Bool = false
     @State private var showingClipboardOverwriteWarning: Bool = false
     @State private var pendingClipboardImport: ParsedImport? = nil
-    @State private var pendingSaveWithShare: Bool = false
 
     // Focus state for auto-resolve on focus loss
     @FocusState private var addressFocused: Bool
@@ -79,15 +75,10 @@ struct AddEditView: View {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel", systemImage: "xmark") { dismiss() }
                 }
-                ToolbarItem(placement: .topBarLeading) {
-                    Button("Clipboard", systemImage: "doc.on.clipboard") {
-                        importFromClipboard()
-                    }
-                }
-                if isEditing {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button("QRCode", systemImage: "qrcode") {
-                            handleShareTap()
+                if importedValues == nil {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button("Clipboard", systemImage: "doc.on.clipboard") {
+                            importFromClipboard()
                         }
                     }
                 }
@@ -98,28 +89,16 @@ struct AddEditView: View {
             }
             .onAppear { populateIfEditing() }
             // Track unsaved changes on any field edit
-            .onChange(of: label)          { _, _ in markUnsaved() }
-            .onChange(of: code)           { _, _ in markUnsaved() }
             .onChange(of: address) { _, _ in
-                markUnsaved()
                 geocodingSuccess = false
                 geocodingError = nil
                 latitude = nil
                 longitude = nil
             }
-            .onChange(of: radiusMeters)   { _, _ in markUnsaved() }
-            .onChange(of: isSilenced)     { _, _ in markUnsaved() }
-            .onChange(of: locationDetails){ _, _ in markUnsaved() }
-            .onChange(of: comment)        { _, _ in markUnsaved() }
             // Auto-resolve address on focus loss
             .onChange(of: addressFocused) { _, focused in
                 if !focused && !address.isEmpty && !geocodingSuccess && !isGeocoding {
                     geocodeAddress()
-                }
-            }
-            .sheet(isPresented: $showingQRShare) {
-                if let existing = existingCode {
-                    QRShareView(accessCode: existing)
                 }
             }
             // Key unavailable error
@@ -138,23 +117,11 @@ struct AddEditView: View {
             ) {
                 // Replace the unresolved warning alert's Save anyway button
                 Button(String(localized: "address.warning.save_anyway")) {
-                    forceSave(thenShare: pendingSaveWithShare)
+                    forceSave()
                 }
                 Button(String(localized: "action.cancel"), role: .cancel) { }
             } message: {
                 Text("address.warning.message")
-            }
-            // Unsaved changes before share
-            .alert(
-                String(localized: "share.unsaved.title"),
-                isPresented: $showingUnsavedChangesAlert
-            ) {
-                Button(String(localized: "share.unsaved.save_and_share")) {
-                    saveAndShare()
-                }
-                Button(String(localized: "action.cancel"), role: .cancel) { }
-            } message: {
-                Text("share.unsaved.message")
             }
             // Clipboard import error
             .alert(
@@ -351,24 +318,6 @@ struct AddEditView: View {
 
     // MARK: - Logic
 
-    private func markUnsaved() {
-        // Only mark unsaved after initial population is complete
-        guard existingCode != nil || importedValues != nil || !label.isEmpty else { return }
-        hasUnsavedChanges = true
-    }
-
-    private func handleShareTap() {
-        if hasUnsavedChanges {
-            showingUnsavedChangesAlert = true
-        } else {
-            showingQRShare = true
-        }
-    }
-
-    private func saveAndShare() {
-        attemptSave(thenShare: true)
-    }
-
     private func importFromClipboard() {
         guard let string = UIPasteboard.general.string,
               let url = URL(string: string),
@@ -429,9 +378,7 @@ struct AddEditView: View {
             } else {
                 geocodeAddress()
             }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                hasUnsavedChanges = false
-            }
+            
             return
         }
 
@@ -485,11 +432,6 @@ struct AddEditView: View {
                 break
             }
         }
-
-        // Don't mark as unsaved on initial population (1 second buffer)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-            hasUnsavedChanges = false
-        }
     }
 
     private func geocodeAddress() {
@@ -524,10 +466,7 @@ struct AddEditView: View {
         }
     }
 
-    private func attemptSave(thenShare: Bool = false) {
-        pendingSaveWithShare = thenShare
-        // If address is present and unresolved, try geocoding first
-        // then save automatically if it succeeds, warn if it fails
+    private func attemptSave() {
         if !address.isEmpty && !geocodingSuccess && !isGeocoding {
             isGeocoding = true
             geocodingError = nil
@@ -558,7 +497,7 @@ struct AddEditView: View {
                         longitude = coordinate.longitude
                         geocodingSuccess = true
                         isGeocoding = false
-                        performSave(thenShare: thenShare)
+                        performSave()
                     }
                 } catch {
                     await MainActor.run {
@@ -573,19 +512,18 @@ struct AddEditView: View {
             return
         }
 
-        // Empty address or already resolved — go straight to warning or save
         if !geocodingSuccess {
             showingUnresolvedWarning = true
             return
         }
-        performSave(thenShare: thenShare)
+        performSave()
     }
 
-    private func forceSave(thenShare: Bool = false) {
-        performSave(thenShare: thenShare)
+    private func forceSave() {
+        performSave()
     }
 
-    private func performSave(thenShare: Bool = false) {
+    private func performSave() {
         // Encrypt code if present
         let encryptedCode: String?
         if !code.isEmpty {
@@ -657,13 +595,7 @@ struct AddEditView: View {
             locationManager.startMonitoring(accessCode: newCode)
         }
 
-        hasUnsavedChanges = false
-
-        if thenShare {
-            showingQRShare = true
-        } else {
-            dismiss()
-        }
+        dismiss()
     }
 
     private func deleteEntry() {

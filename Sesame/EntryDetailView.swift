@@ -1,0 +1,237 @@
+//
+//  EntryDetailView.swift
+//  Sesame
+//
+//  Created by Greg on 2026-03-22.
+//
+
+import SwiftUI
+import CoreLocation
+
+struct EntryDetailView: View {
+
+    @Environment(LocationManager.self) private var locationManager
+    @Environment(\.dismiss) private var dismiss
+
+    let accessCode: AccessCode
+
+    @State private var showingCode: Bool = false
+    @State private var showingEdit: Bool = false
+    @State private var showingQRShare: Bool = false
+    @State private var keyUnavailable: Bool = false
+
+    private var plainCode: String? {
+        guard let stored = accessCode.code else { return nil }
+        switch CryptoManager.decrypt(stored) {
+        case .success(let plain), .legacyPlainText(let plain):
+            return plain
+        default:
+            return nil
+        }
+    }
+
+    private var plainLocationDetails: String? {
+        guard let stored = accessCode.locationDetails else { return nil }
+        switch CryptoManager.decrypt(stored) {
+        case .success(let plain), .legacyPlainText(let plain):
+            return plain.isEmpty ? nil : plain
+        default:
+            return nil
+        }
+    }
+
+    private var plainComment: String? {
+        guard let stored = accessCode.comment else { return nil }
+        switch CryptoManager.decrypt(stored) {
+        case .success(let plain), .legacyPlainText(let plain):
+            return plain.isEmpty ? nil : plain
+        default:
+            return nil
+        }
+    }
+
+    private var isFutureVersion: Bool {
+        guard let stored = accessCode.code else { return false }
+        return CryptoManager.isFutureVersion(stored)
+    }
+
+    private var isUnresolved: Bool {
+        accessCode.latitude == nil && accessCode.longitude == nil
+    }
+
+    private var formattedRadius: String {
+        let meters = accessCode.radiusMeters ?? 100.0
+        let measurement = Measurement<UnitLength>(value: meters, unit: .meters)
+        return Measurement<UnitLength>.FormatStyle(
+            width: .abbreviated, usage: .road
+        ).format(measurement)
+    }
+
+    var body: some View {
+        NavigationStack {
+            List {
+                // ── Label ──────────────────────────────────────
+                Section {
+                    Text(accessCode.label ?? "")
+                        .font(.title2)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.primary)
+                        .padding(.vertical, 4)
+                }
+
+                // ── Code ───────────────────────────────────────
+                Section {
+                    if isFutureVersion {
+                        Label {
+                            Text("entry.requires_newer_version")
+                                .foregroundStyle(.orange)
+                        } icon: {
+                            Image(systemName: "lock.trianglebadge.exclamationmark.fill")
+                                .foregroundStyle(.orange)
+                        }
+                    } else if let plain = plainCode {
+                        HStack {
+                            Text(showingCode ? plain : String(repeating: "•", count: plain.count))
+                                .font(.title3)
+                                .fontWeight(.medium)
+                                .monospaced()
+                                .foregroundStyle(.primary)
+                                .animation(.none, value: showingCode)
+                            Spacer()
+                            Button {
+                                showingCode.toggle()
+                            } label: {
+                                Image(systemName: showingCode ? "eye.slash" : "eye")
+                                    .foregroundStyle(.secondary)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                        .padding(.vertical, 4)
+                    } else {
+                        Text("detail.no_code")
+                            .foregroundStyle(.secondary)
+                    }
+                } header: {
+                    Text("code.header")
+                }
+
+                // ── Address ────────────────────────────────────
+                Section {
+                    if let address = accessCode.address, !address.isEmpty {
+                        HStack(alignment: .top, spacing: 8) {
+                            Image(systemName: isUnresolved
+                                  ? "location.slash.fill"
+                                  : "mappin.circle.fill")
+                                .foregroundStyle(isUnresolved ? .orange : .secondary)
+                                .padding(.top, 2)
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(address)
+                                    .foregroundStyle(.primary)
+                                if isUnresolved {
+                                    Text("address.warning.message")
+                                        .font(.caption)
+                                        .foregroundStyle(.orange)
+                                }
+                            }
+                        }
+                        .padding(.vertical, 2)
+                    } else {
+                        HStack(spacing: 8) {
+                            Image(systemName: "location.slash.fill")
+                                .foregroundStyle(.orange)
+                            Text("detail.no_address")
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                } header: {
+                    Text("address.header")
+                }
+
+                // ── Radius & Silence ───────────────────────────
+                Section {
+                    HStack {
+                        Image(systemName: "circle.dashed")
+                            .foregroundStyle(.secondary)
+                        Text(formattedRadius)
+                        Spacer()
+                        Image(systemName: accessCode.isSilenced == true
+                              ? "bell.slash.fill"
+                              : "bell.fill")
+                            .foregroundStyle(accessCode.isSilenced == true
+                                             ? Color.secondary
+                                             : Color.orange)
+                        Text(accessCode.isSilenced == true
+                             ? String(localized: "detail.silenced")
+                             : String(localized: "detail.active"))
+                            .foregroundStyle(accessCode.isSilenced == true
+                                             ? .secondary
+                                             : .primary)
+                    }
+                } header: {
+                    Text("radius.header")
+                }
+
+                // ── Location details ───────────────────────────
+                if let details = plainLocationDetails {
+                    Section {
+                        Text(details)
+                            .foregroundStyle(.primary)
+                    } header: {
+                        Text("location_details.header")
+                    }
+                }
+
+                // ── Comment ────────────────────────────────────
+                if let comment = plainComment {
+                    Section {
+                        Text(comment)
+                            .foregroundStyle(.primary)
+                    } header: {
+                        Text("comment.header")
+                    }
+                }
+            }
+            .navigationTitle(Text("detail.title"))
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    HStack(spacing: 16) {
+                        Button {
+                            showingQRShare = true
+                        } label: {
+                            Image(systemName: "qrcode")
+                        }
+                        Button {
+                            showingEdit = true
+                        } label: {
+                            Image(systemName: "pencil")
+                        }
+                    }
+                }
+            }
+            .sheet(isPresented: $showingEdit) {
+                AddEditView(existingCode: accessCode)
+                    .environment(locationManager)
+            }
+            .sheet(isPresented: $showingQRShare) {
+                QRShareView(accessCode: accessCode)
+            }
+            .alert(
+                String(localized: "error.key_unavailable.title"),
+                isPresented: $keyUnavailable
+            ) {
+                Button(String(localized: "action.ok"), role: .cancel) { }
+            } message: {
+                Text("error.key_unavailable.message")
+            }
+        }
+    }
+}
