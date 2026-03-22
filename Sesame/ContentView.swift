@@ -91,6 +91,13 @@ struct ContentView: View {
             .searchable(text: $searchText, prompt: Text("search.prompt"))
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        showingAbout = true
+                    } label: {
+                        Image(systemName: "info.circle")
+                    }
+                }
+                ToolbarItem(placement: .topBarLeading) {
                     sortButton
                 }
                 ToolbarItem(placement: .topBarTrailing) {
@@ -149,47 +156,22 @@ struct ContentView: View {
     // MARK: - Subviews
 
     private var sortButton: some View {
-        Menu {
-            Button {
-                showingAbout = true
-            } label: {
-                Label(
-                    String(localized: "about.title"),
-                    systemImage: "info.circle"
-                )
-            }
-            Divider()
-            Button {
-                sortOrderRaw = SortOrder.alphabetical.rawValue
-            } label: {
-                Label(
-                    String(localized: "sort.alphabetical"),
-                    systemImage: sortOrder == .alphabetical
-                        ? "checkmark"
-                        : "textformat.abc"
-                )
-            }
-            Button {
-                sortOrderRaw = SortOrder.byDistance.rawValue
-            } label: {
-                Label(
-                    String(localized: "sort.by_distance"),
-                    systemImage: sortOrder == .byDistance
-                        ? "checkmark"
-                        : "location"
-                )
-            }
-        } label: {
-            // Show slash icon when preference is distance but location unavailable
+        Toggle(isOn: Binding(
+            get: { sortOrder == .byDistance },
+            set: { sortOrderRaw = $0
+                ? SortOrder.byDistance.rawValue
+                : SortOrder.alphabetical.rawValue }
+        )) {
             if sortOrder == .byDistance && !canSortByDistance {
                 Image(systemName: "location.slash.fill")
-                    .foregroundStyle(.secondary)
             } else if effectiveSortByDistance {
                 Image(systemName: "location.fill")
             } else {
                 Image(systemName: "textformat.abc")
             }
         }
+        .toggleStyle(.button)
+        .tint(.accentColor)
     }
 
     private var list: some View {

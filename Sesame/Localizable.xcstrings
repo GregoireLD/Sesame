@@ -967,16 +967,66 @@
     },
     "action.close" : {
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Close" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Fermer" } },
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Schließen" } },
-        "es" : { "stringUnit" : { "state" : "translated", "value" : "Cerrar" } },
-        "it" : { "stringUnit" : { "state" : "translated", "value" : "Chiudi" } },
-        "ja" : { "stringUnit" : { "state" : "translated", "value" : "閉じる" } },
-        "ko" : { "stringUnit" : { "state" : "translated", "value" : "닫기" } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "关闭" } },
-        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "關閉" } },
-        "ar" : { "stringUnit" : { "state" : "translated", "value" : "إغلاق" } }
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "إغلاق"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schließen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Close"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cerrar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fermer"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chiudi"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "閉じる"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "닫기"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关闭"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "關閉"
+          }
+        }
       }
     },
     "action.delete" : {
@@ -2897,72 +2947,322 @@
     },
     "detail.active" : {
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Active" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Actif" } },
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Aktiv" } },
-        "es" : { "stringUnit" : { "state" : "translated", "value" : "Activo" } },
-        "it" : { "stringUnit" : { "state" : "translated", "value" : "Attivo" } },
-        "ja" : { "stringUnit" : { "state" : "translated", "value" : "アクティブ" } },
-        "ko" : { "stringUnit" : { "state" : "translated", "value" : "활성" } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "活跃" } },
-        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "活躍" } },
-        "ar" : { "stringUnit" : { "state" : "translated", "value" : "نشط" } }
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "نشط"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aktiv"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Active"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Actif"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Attivo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アクティブ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "활성"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "活跃"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "活躍"
+          }
+        }
       }
     },
     "detail.no_address" : {
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "No address" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Pas d'adresse" } },
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Keine Adresse" } },
-        "es" : { "stringUnit" : { "state" : "translated", "value" : "Sin dirección" } },
-        "it" : { "stringUnit" : { "state" : "translated", "value" : "Nessun indirizzo" } },
-        "ja" : { "stringUnit" : { "state" : "translated", "value" : "住所なし" } },
-        "ko" : { "stringUnit" : { "state" : "translated", "value" : "주소 없음" } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "无地址" } },
-        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "無地址" } },
-        "ar" : { "stringUnit" : { "state" : "translated", "value" : "لا يوجد عنوان" } }
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "لا يوجد عنوان"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keine Adresse"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No address"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sin dirección"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pas d'adresse"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nessun indirizzo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "住所なし"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "주소 없음"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无地址"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "無地址"
+          }
+        }
       }
     },
     "detail.no_code" : {
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "No code" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Pas de code" } },
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Kein Code" } },
-        "es" : { "stringUnit" : { "state" : "translated", "value" : "Sin código" } },
-        "it" : { "stringUnit" : { "state" : "translated", "value" : "Nessun codice" } },
-        "ja" : { "stringUnit" : { "state" : "translated", "value" : "コードなし" } },
-        "ko" : { "stringUnit" : { "state" : "translated", "value" : "코드 없음" } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "无代码" } },
-        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "無代碼" } },
-        "ar" : { "stringUnit" : { "state" : "translated", "value" : "لا يوجد رمز" } }
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "لا يوجد رمز"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kein Code"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No code"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sin código"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pas de code"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nessun codice"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コードなし"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "코드 없음"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无代码"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "無代碼"
+          }
+        }
       }
     },
     "detail.silenced" : {
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Silenced" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Silencieux" } },
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Stumm" } },
-        "es" : { "stringUnit" : { "state" : "translated", "value" : "Silenciado" } },
-        "it" : { "stringUnit" : { "state" : "translated", "value" : "Silenziato" } },
-        "ja" : { "stringUnit" : { "state" : "translated", "value" : "サイレント" } },
-        "ko" : { "stringUnit" : { "state" : "translated", "value" : "무음" } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "已静音" } },
-        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "已靜音" } },
-        "ar" : { "stringUnit" : { "state" : "translated", "value" : "صامت" } }
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "صامت"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stumm"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Silenced"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Silenciado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Silencieux"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Silenziato"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "サイレント"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "무음"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已静音"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已靜音"
+          }
+        }
       }
     },
     "detail.title" : {
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Entry" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Fiche" } },
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Eintrag" } },
-        "es" : { "stringUnit" : { "state" : "translated", "value" : "Entrada" } },
-        "it" : { "stringUnit" : { "state" : "translated", "value" : "Voce" } },
-        "ja" : { "stringUnit" : { "state" : "translated", "value" : "エントリ" } },
-        "ko" : { "stringUnit" : { "state" : "translated", "value" : "항목" } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "条目" } },
-        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "條目" } },
-        "ar" : { "stringUnit" : { "state" : "translated", "value" : "إدخال" } }
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "إدخال"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eintrag"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entry"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entrada"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fiche"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voce"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エントリ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "항목"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "条目"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "條目"
+          }
+        }
       }
     },
     "Done" : {
@@ -7250,6 +7550,7 @@
       }
     },
     "sort.alphabetical" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -7314,6 +7615,7 @@
       }
     },
     "sort.by_distance" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
