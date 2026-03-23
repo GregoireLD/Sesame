@@ -245,8 +245,8 @@ struct EntryDetailView: View {
         guard let lat = accessCode.latitude,
               let lon = accessCode.longitude,
               let label = accessCode.label else { return }
-        let coordinate = CLLocationCoordinate2D(latitude: lat, longitude: lon)
-        let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: coordinate))
+        let location = CLLocation(latitude: lat, longitude: lon)
+        let mapItem = MKMapItem(location: location, address: nil)
         mapItem.name = label
         mapItem.openInMaps()
     }
