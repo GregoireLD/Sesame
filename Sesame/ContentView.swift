@@ -98,9 +98,12 @@ struct ContentView: View {
                         Image(systemName: "info.circle")
                     }
                 }
+                
                 ToolbarItem(placement: .topBarLeading) {
                     sortButton
                 }
+                .sharedBackgroundVisibility(.hidden)
+                
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         showingAddSheet = true

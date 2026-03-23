@@ -196,7 +196,7 @@ struct EntryDetailView: View {
             .navigationTitle(Text("detail.title"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
+                ToolbarItem(placement: .cancellationAction) {
                     Button {
                         dismiss()
                     } label: {
@@ -204,18 +204,21 @@ struct EntryDetailView: View {
                             .foregroundStyle(.secondary)
                     }
                 }
+                
                 ToolbarItem(placement: .topBarTrailing) {
-                    HStack(spacing: 16) {
-                        Button {
-                            showingQRShare = true
-                        } label: {
-                            Image(systemName: "qrcode")
-                        }
-                        Button {
-                            showingEdit = true
-                        } label: {
-                            Image(systemName: "pencil")
-                        }
+                    Button {
+                        showingQRShare = true
+                    } label: {
+                        Image(systemName: "qrcode")
+                    }
+                }
+                .sharedBackgroundVisibility(.hidden)
+                
+                ToolbarItem(placement: .confirmationAction) {
+                    Button {
+                        showingEdit = true
+                    } label: {
+                        Image(systemName: "pencil")
                     }
                 }
             }

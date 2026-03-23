@@ -78,13 +78,16 @@ struct AddEditView: View {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel", systemImage: "xmark") { dismiss() }
                 }
-                if importedValues == nil {
-                    ToolbarItem(placement: .topBarLeading) {
+                
+                ToolbarItem(placement: .topBarLeading) {
+                    if importedValues == nil {
                         Button("Clipboard", systemImage: "doc.on.clipboard") {
                             importFromClipboard()
                         }
                     }
                 }
+                .sharedBackgroundVisibility(.hidden)
+                
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Done", systemImage: "checkmark") { attemptSave() }
                         .disabled(!canSave)
