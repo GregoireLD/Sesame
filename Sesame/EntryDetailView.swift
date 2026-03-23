@@ -7,6 +7,7 @@
 
 import SwiftUI
 import CoreLocation
+import MapKit
 
 struct EntryDetailView: View {
 
@@ -19,6 +20,7 @@ struct EntryDetailView: View {
     @State private var showingEdit: Bool = false
     @State private var showingQRShare: Bool = false
     @State private var keyUnavailable: Bool = false
+    @State private var shouldDismiss: Bool = false
 
     private var plainCode: String? {
         guard let stored = accessCode.code else { return nil }
@@ -118,30 +120,30 @@ struct EntryDetailView: View {
                 // ── Address ────────────────────────────────────
                 Section {
                     if let address = accessCode.address, !address.isEmpty {
-                        HStack(alignment: .top, spacing: 8) {
-                            Image(systemName: isUnresolved
-                                  ? "location.slash.fill"
-                                  : "mappin.circle.fill")
-                                .foregroundStyle(isUnresolved ? .orange : .secondary)
-                                .padding(.top, 2)
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text(address)
-                                    .foregroundStyle(.primary)
-                                if isUnresolved {
-                                    Text("address.warning.message")
-                                        .font(.caption)
-                                        .foregroundStyle(.orange)
+                        Button {
+                            openInMaps()
+                        } label: {
+                            HStack(alignment: .top, spacing: 8) {
+                                Image(systemName: isUnresolved
+                                      ? "location.slash.fill"
+                                      : "mappin.circle.fill")
+                                    .foregroundStyle(isUnresolved ? Color.orange : Color.secondary)
+                                    .padding(.top, 2)
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(address)
+                                        .foregroundStyle(.primary)
+                                        .multilineTextAlignment(.leading)
+                                    if isUnresolved {
+                                        Text("address.warning.message")
+                                            .font(.caption)
+                                            .foregroundStyle(.orange)
+                                    }
                                 }
                             }
+                            .padding(.vertical, 2)
                         }
-                        .padding(.vertical, 2)
-                    } else {
-                        HStack(spacing: 8) {
-                            Image(systemName: "location.slash.fill")
-                                .foregroundStyle(.orange)
-                            Text("detail.no_address")
-                                .foregroundStyle(.secondary)
-                        }
+                        .buttonStyle(.plain)
+                        .disabled(isUnresolved)
                     }
                 } header: {
                     Text("address.header")
@@ -217,9 +219,13 @@ struct EntryDetailView: View {
                     }
                 }
             }
-            .sheet(isPresented: $showingEdit) {
-                AddEditView(existingCode: accessCode)
-                    .environment(locationManager)
+            .sheet(isPresented: $showingEdit, onDismiss: {
+                if shouldDismiss { dismiss() }
+            }) {
+                AddEditView(existingCode: accessCode, onDelete: {
+                    shouldDismiss = true
+                })
+                .environment(locationManager)
             }
             .sheet(isPresented: $showingQRShare) {
                 QRShareView(accessCode: accessCode)
@@ -233,5 +239,15 @@ struct EntryDetailView: View {
                 Text("error.key_unavailable.message")
             }
         }
+    }
+    
+    private func openInMaps() {
+        guard let lat = accessCode.latitude,
+              let lon = accessCode.longitude,
+              let label = accessCode.label else { return }
+        let coordinate = CLLocationCoordinate2D(latitude: lat, longitude: lon)
+        let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: coordinate))
+        mapItem.name = label
+        mapItem.openInMaps()
     }
 }

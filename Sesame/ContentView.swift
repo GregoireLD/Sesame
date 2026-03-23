@@ -9,6 +9,7 @@ import SwiftUI
 import SwiftData
 import CoreLocation
 import CoreData
+import MapKit
 
 enum SortOrder: String {
     case alphabetical
@@ -261,6 +262,16 @@ struct ContentView: View {
                 .tint(code.isSilenced == true ? .orange : .secondary)
             }
         }
+        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+            if code.latitude != nil && code.longitude != nil {
+                Button {
+                    openInMaps(accessCode: code)
+                } label: {
+                    Label("action.maps", systemImage: "map.fill")
+                }
+                .tint(.blue)
+            }
+        }
     }
 
     private var emptyState: some View {
@@ -423,5 +434,15 @@ struct ContentView: View {
             locationManager.stopMonitoring(accessCode: code)
             modelContext.delete(code)
         }
+    }
+    
+    private func openInMaps(accessCode: AccessCode) {
+        guard let lat = accessCode.latitude,
+              let lon = accessCode.longitude,
+              let label = accessCode.label else { return }
+        let coordinate = CLLocationCoordinate2D(latitude: lat, longitude: lon)
+        let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: coordinate))
+        mapItem.name = label
+        mapItem.openInMaps()
     }
 }

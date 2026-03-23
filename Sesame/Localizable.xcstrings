@@ -1157,6 +1157,20 @@
         }
       }
     },
+    "action.maps" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Maps" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Plans" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Karten" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Mapas" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Mappe" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "マップ" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "지도" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "地图" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "地圖" } },
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "الخرائط" } }
+      }
+    },
     "action.ok" : {
       "localizations" : {
         "ar" : {
@@ -2945,6 +2959,34 @@
         }
       }
     },
+    "delete.confirm.message" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "This entry will be permanently deleted from all your devices." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Cette fiche sera définitivement supprimée de tous vos appareils." } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Dieser Eintrag wird dauerhaft von allen deinen Geräten gelöscht." } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Esta entrada se eliminará permanentemente de todos tus dispositivos." } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Questa voce verrà eliminata definitivamente da tutti i tuoi dispositivi." } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "このエントリはすべてのデバイスから完全に削除されます。" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "이 항목은 모든 기기에서 영구적으로 삭제됩니다." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "此条目将从您的所有设备上永久删除。" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "此條目將從您的所有裝置上永久刪除。" } },
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "سيتم حذف هذا الإدخال نهائيًا من جميع أجهزتك." } }
+      }
+    },
+    "delete.confirm.title" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Delete entry?" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Supprimer la fiche ?" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Eintrag löschen?" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "¿Eliminar entrada?" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Eliminare la voce?" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "エントリを削除しますか？" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "항목을 삭제하시겠습니까?" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "删除条目？" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "刪除條目？" } },
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "حذف الإدخال؟" } }
+      }
+    },
     "detail.active" : {
       "localizations" : {
         "ar" : {
@@ -3005,70 +3047,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "活躍"
-          }
-        }
-      }
-    },
-    "detail.no_address" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "لا يوجد عنوان"
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Keine Adresse"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No address"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sin dirección"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pas d'adresse"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nessun indirizzo"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "住所なし"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "주소 없음"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "无地址"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "無地址"
           }
         }
       }
@@ -7545,136 +7523,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "搜尋位置"
-          }
-        }
-      }
-    },
-    "sort.alphabetical" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "أبجديًا"
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alphabetisch"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alphabetical"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alfabético"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alphabétique"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alfabetico"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "五十音順"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "가나다순"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "按字母顺序"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "按字母順序"
-          }
-        }
-      }
-    },
-    "sort.by_distance" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "حسب المسافة"
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nach Entfernung"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "By Distance"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Por distancia"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Par distance"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Per distanza"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "距離順"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "거리순"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "按距离"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "按距離"
           }
         }
       }

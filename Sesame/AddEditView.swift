@@ -17,6 +17,7 @@ struct AddEditView: View {
 
     var existingCode: AccessCode? = nil
     var importedValues: ParsedImport? = nil
+    var onDelete: (() -> Void)? = nil
 
     @State private var label: String = ""
     @State private var code: String = ""
@@ -27,6 +28,8 @@ struct AddEditView: View {
     @State private var longitude: Double? = nil
     @State private var locationDetails: String = ""
     @State private var comment: String = ""
+    @State private var isPopulating: Bool = false
+    @State private var showingDeleteConfirmation: Bool = false
 
     @State private var isGeocoding: Bool = false
     @State private var geocodingError: String? = nil
@@ -89,7 +92,10 @@ struct AddEditView: View {
             }
             .onAppear { populateIfEditing() }
             // Track unsaved changes on any field edit
-            .onChange(of: address) { _, _ in
+            .onChange(of: address) { oldValue, newValue in
+                // Only invalidate geocoding if the address actually changed
+                // and we're not in the middle of a programmatic population
+                guard !isPopulating, newValue != oldValue else { return }
                 geocodingSuccess = false
                 geocodingError = nil
                 latitude = nil
@@ -131,6 +137,18 @@ struct AddEditView: View {
                 Button(String(localized: "action.ok"), role: .cancel) { }
             } message: {
                 Text("clipboard.error.message")
+            }
+            // Deletion alert
+            .alert(
+                String(localized: "delete.confirm.title"),
+                isPresented: $showingDeleteConfirmation
+            ) {
+                Button(String(localized: "action.delete"), role: .destructive) {
+                    deleteEntry()
+                }
+                Button(String(localized: "action.cancel"), role: .cancel) { }
+            } message: {
+                Text("delete.confirm.message")
             }
             // Clipboard Overwrite Warning
             .alert(
@@ -299,7 +317,7 @@ struct AddEditView: View {
     private var deleteSection: some View {
         Section {
             Button(role: .destructive) {
-                deleteEntry()
+                showingDeleteConfirmation = true
             } label: {
                 HStack {
                     Spacer()
@@ -339,6 +357,7 @@ struct AddEditView: View {
     }
 
     private func applyClipboardImport(_ parsed: ParsedImport) {
+        isPopulating = true
         label = parsed.label
         address = parsed.address ?? ""
         code = parsed.code ?? ""
@@ -356,9 +375,13 @@ struct AddEditView: View {
         } else {
             geocodeAddress()
         }
+        isPopulating = false
     }
 
     private func populateIfEditing() {
+        isPopulating = true
+        defer { isPopulating = false }
+        
         // Handle import pre-population
         if let imported = importedValues {
             label = imported.label
@@ -602,6 +625,7 @@ struct AddEditView: View {
         guard let existing = existingCode else { return }
         locationManager.stopMonitoring(accessCode: existing)
         modelContext.delete(existing)
+        onDelete?()
         dismiss()
     }
 }
