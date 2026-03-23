@@ -12,7 +12,7 @@ $langs = [
 
 $title = 'Sesame — Shared Access Code';
 $desc  = 'Someone shared an access code with you. Open to view it.';
-$url   = 'https://duval.paris/sesame/share';
+$url   = 'https://sesame-app.com/share';
 
 $accept = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '';
 foreach ($langs as $code => $strings) {
@@ -35,12 +35,12 @@ foreach ($langs as $code => $strings) {
   <meta property="og:description" content="<?= htmlspecialchars($desc) ?>" />
   <meta property="og:url" content="<?= htmlspecialchars($url) ?>" />
 
-  <meta property="og:image" content="https://duval.paris/sesame/images/sesame_social.png" />
+  <meta property="og:image" content="https://sesame-app.com/images/sesame_social.png" />
   <meta property="og:type" content="website" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:image" content="https://duval.paris/sesame/images/sesame_social.png" />
+  <meta name="twitter:image" content="https://sesame-app.com/images/sesame_social.png" />
 
-  <link rel="icon" href="https://duval.paris/sesame/images/sesame.png" />
+  <link rel="icon" href="https://sesame-app.com/images/sesame.png" />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
 
   <style>
@@ -354,7 +354,7 @@ foreach ($langs as $code => $strings) {
 
 <script>
   const APP_STORE_URL = 'https://apps.apple.com/app/sesame';
-  const HOMEPAGE_URL  = 'https://duval.paris/sesame/';
+  const HOMEPAGE_URL  = 'https://sesame-app.com/';
   const LANGS = ['en','fr','de','es','it','ja','ko','zh-hans','zh-hant','ar'];
   const RTL_LANGS = ['ar'];
 
@@ -599,7 +599,7 @@ foreach ($langs as $code => $strings) {
   function renderHeader() {
     return `
       <div class="header">
-        <img class="app-icon" src="https://duval.paris/sesame/images/sesame.png" alt="Sesame" />
+        <img class="app-icon" src="https://sesame-app.com/images/sesame.png" alt="Sesame" />
         <div class="header-text">
           <span class="app-name">Sesame</span>
           <span class="shared-by">${t('shared_by')}</span>

@@ -54,8 +54,8 @@ struct SesameApp: App {
                     if url.scheme == "sesame", url.host == "import" {
                         importURL = url
                     } else if url.scheme == "https",
-                              url.host == "duval.paris",
-                              url.path == "/sesame/share" {
+                              url.host == "sesame-app.com",
+                              url.path == "/share" {
                         importURL = url
                     }
                 }

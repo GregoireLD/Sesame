@@ -9,8 +9,8 @@ import SwiftUI
 
 struct AboutView: View {
 
-    private let supportURL = URL(string: "https://duval.paris/sesame")!
-    private let privacyURL = URL(string: "https://duval.paris/sesame/privacy.php")!
+    private let supportURL = URL(string: "https://sesame-app.com")!
+    private let privacyURL = URL(string: "https://sesame-app.com/privacy.php")!
     private let tipURL = URL(string: "https://ko-fi.com/duvalparis")!
     
     @Environment(\.dismiss) private var dismiss

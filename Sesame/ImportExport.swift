@@ -60,8 +60,8 @@ struct ImportExport {
             components.host = "import"
         } else {
             components.scheme = "https"
-            components.host = "duval.paris"
-            components.path = "/sesame/share"
+            components.host = "sesame-app.com"
+            components.path = "/share"
         }
 
         var items: [URLQueryItem] = [
@@ -119,7 +119,7 @@ struct ImportExport {
             var fragmentComponents = URLComponents()
             fragmentComponents.queryItems = items
             guard let encodedQuery = fragmentComponents.percentEncodedQuery else { return nil }
-            let urlString = "https://duval.paris/sesame/share#\(encodedQuery)"
+            let urlString = "https://sesame-app.com/share#\(encodedQuery)"
             return URL(string: urlString)
         }
     }
