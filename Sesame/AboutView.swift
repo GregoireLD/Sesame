@@ -43,7 +43,7 @@ struct AboutView: View {
                 versionSection
             }
             .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
+                ToolbarItem(placement: .cancellationAction) {
                     Button("action.close", systemImage: "xmark.circle.fill") {
                         dismiss()
                     }

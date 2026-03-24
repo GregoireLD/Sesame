@@ -127,7 +127,7 @@ struct EntryDetailView: View {
                                 Image(systemName: isUnresolved
                                       ? "location.slash.fill"
                                       : "mappin.circle.fill")
-                                    .foregroundStyle(isUnresolved ? Color.orange : Color.secondary)
+                                    .foregroundStyle(isUnresolved ? Color.orange : Color.green)
                                     .padding(.top, 2)
                                 VStack(alignment: .leading, spacing: 4) {
                                     Text(address)
@@ -138,6 +138,12 @@ struct EntryDetailView: View {
                                             .font(.caption)
                                             .foregroundStyle(.orange)
                                     }
+                                }
+                                Spacer()
+                                if !isUnresolved {
+                                    Image(systemName: "arrow.triangle.turn.up.right.circle.fill")
+                                        .foregroundStyle(Color.green)
+                                        .font(.title3)
                                 }
                             }
                             .padding(.vertical, 2)
@@ -212,7 +218,6 @@ struct EntryDetailView: View {
                         Image(systemName: "qrcode")
                     }
                 }
-                .sharedBackgroundVisibility(.hidden)
                 
                 ToolbarItem(placement: .confirmationAction) {
                     Button {
