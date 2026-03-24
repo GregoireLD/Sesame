@@ -166,16 +166,39 @@ struct ContentView: View {
                 ? SortOrder.byDistance.rawValue
                 : SortOrder.alphabetical.rawValue }
         )) {
-            if sortOrder == .byDistance && !canSortByDistance {
-                Image(systemName: "location.slash.fill")
-            } else if effectiveSortByDistance {
-                Image(systemName: "location.fill")
-            } else {
-                Image(systemName: "textformat.abc")
-            }
+            sortButtonIcon
         }
         .toggleStyle(.button)
         .tint(.accentColor)
+    }
+
+    private var sortButtonIcon: some View {
+        let symbol: String
+        let color: Color
+        if sortOrder == .byDistance && !canSortByDistance {
+            symbol = "location.slash.fill"
+            color = .secondary
+        } else if effectiveSortByDistance {
+            symbol = "location.fill"
+            color = .accentColor
+        } else {
+            symbol = "textformat.abc"
+            color = .primary
+        }
+
+        return ZStack(alignment: .bottomTrailing) {
+            // Invisible spacer sized to the widest symbol
+            Image(systemName: "textformat.abc")
+                .opacity(0)
+            // Active symbol
+            Image(systemName: symbol)
+                .foregroundStyle(color)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            Image(systemName: "arrow.down.circle.fill")
+                .font(.system(size: 9))
+                .foregroundStyle(Color.white, color)
+                .offset(x: 5, y: 5)
+        }
     }
 
     private var list: some View {
