@@ -44,7 +44,7 @@ struct AboutView: View {
             }
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("action.close", systemImage: "xmark.circle.fill") {
+                    Button("action.close", systemImage: "xmark") {
                         dismiss()
                     }
                     .foregroundStyle(.secondary)
