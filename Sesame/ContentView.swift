@@ -196,7 +196,7 @@ struct ContentView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             Image(systemName: "arrow.down.circle.fill")
                 .font(.system(size: 9))
-                .foregroundStyle(Color.white, color)
+                .foregroundStyle(Color.white, Color.accentColor)
                 .offset(x: 5, y: 5)
         }
     }
