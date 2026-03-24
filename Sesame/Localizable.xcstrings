@@ -1030,7 +1030,6 @@
       }
     },
     "action.copy" : {
-      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {

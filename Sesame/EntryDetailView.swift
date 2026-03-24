@@ -79,6 +79,14 @@ struct EntryDetailView: View {
                         .fontWeight(.semibold)
                         .foregroundStyle(.primary)
                         .padding(.vertical, 4)
+                        .contextMenu {
+                            Button {
+                                UIPasteboard.general.string = accessCode.label
+                                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                            } label: {
+                                Label("action.copy", systemImage: "doc.on.doc")
+                            }
+                        }
                 }
 
                 // ── Code ───────────────────────────────────────
@@ -99,6 +107,16 @@ struct EntryDetailView: View {
                                 .monospaced()
                                 .foregroundStyle(.primary)
                                 .animation(.none, value: showingCode)
+                                .contextMenu {
+                                    if showingCode {
+                                        Button {
+                                            UIPasteboard.general.string = plain
+                                            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                                        } label: {
+                                            Label("action.copy", systemImage: "doc.on.doc")
+                                        }
+                                    }
+                                }
                             Spacer()
                             Button {
                                 showingCode.toggle()
@@ -150,6 +168,21 @@ struct EntryDetailView: View {
                         }
                         .buttonStyle(.plain)
                         .disabled(isUnresolved)
+                        .contextMenu {
+                            Button {
+                                UIPasteboard.general.string = address
+                                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                            } label: {
+                                Label("action.copy", systemImage: "doc.on.doc")
+                            }
+                            if !isUnresolved {
+                                Button {
+                                    openInMaps()
+                                } label: {
+                                    Label("action.maps", systemImage: "map.fill")
+                                }
+                            }
+                        }
                     }
                 } header: {
                     Text("address.header")
@@ -184,6 +217,14 @@ struct EntryDetailView: View {
                     Section {
                         Text(details)
                             .foregroundStyle(.primary)
+                            .contextMenu {
+                                Button {
+                                    UIPasteboard.general.string = details
+                                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                                } label: {
+                                    Label("action.copy", systemImage: "doc.on.doc")
+                                }
+                            }
                     } header: {
                         Text("location_details.header")
                     }
@@ -194,6 +235,14 @@ struct EntryDetailView: View {
                     Section {
                         Text(comment)
                             .foregroundStyle(.primary)
+                            .contextMenu {
+                                Button {
+                                    UIPasteboard.general.string = comment
+                                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                                } label: {
+                                    Label("action.copy", systemImage: "doc.on.doc")
+                                }
+                            }
                     } header: {
                         Text("comment.header")
                     }
@@ -210,7 +259,6 @@ struct EntryDetailView: View {
                             .foregroundStyle(.secondary)
                     }
                 }
-                
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         showingQRShare = true
@@ -218,7 +266,6 @@ struct EntryDetailView: View {
                         Image(systemName: "qrcode")
                     }
                 }
-                
                 ToolbarItem(placement: .confirmationAction) {
                     Button {
                         showingEdit = true
@@ -248,7 +295,7 @@ struct EntryDetailView: View {
             }
         }
     }
-    
+
     private func openInMaps() {
         guard let lat = accessCode.latitude,
               let lon = accessCode.longitude,

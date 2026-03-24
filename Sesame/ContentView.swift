@@ -265,15 +265,15 @@ struct ContentView: View {
                 .tint(code.isSilenced == true ? .orange : .secondary)
             }
         }
-        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-            if code.latitude != nil && code.longitude != nil {
-                Button {
+        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+            Button {
+                if code.latitude != nil && code.longitude != nil {
                     openInMaps(accessCode: code)
-                } label: {
-                    Label("action.maps", systemImage: "map.fill")
                 }
-                .tint(.blue)
+            } label: {
+                Label("action.maps", systemImage: "map.fill")
             }
+            .tint(code.latitude != nil && code.longitude != nil ? .blue : .gray)
         }
     }
 
