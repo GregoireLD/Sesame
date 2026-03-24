@@ -288,7 +288,7 @@ struct ContentView: View {
                 .tint(code.isSilenced == true ? .orange : .secondary)
             }
         }
-        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
             Button {
                 if code.latitude != nil && code.longitude != nil {
                     openInMaps(accessCode: code)
