@@ -144,8 +144,8 @@ struct ContentView: View {
                 }
                 selectedEntryID = nil
             }
-            .onChange(of: accessCodes) { _, newCodes in
-                locationManager.restartAllMonitoring(accessCodes: newCodes)
+            .onChange(of: accessCodes) { _, _ in
+                locationManager.restartAllMonitoring(context: modelContext)
             }
             .fullScreenCover(isPresented: .init(
                 get: { !hasCompletedOnboarding },
@@ -182,13 +182,13 @@ struct ContentView: View {
             symbol = "location.fill"
             color = .accentColor
         } else {
-            symbol = "textformat.abc"
+            symbol = "textformat.characters"
             color = .primary
         }
 
         return ZStack(alignment: .bottomTrailing) {
             // Invisible spacer sized to the widest symbol
-            Image(systemName: "textformat.abc")
+            Image(systemName: "textformat.characters")
                 .opacity(0)
             // Active symbol
             Image(systemName: symbol)

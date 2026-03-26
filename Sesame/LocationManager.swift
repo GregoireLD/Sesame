@@ -8,6 +8,7 @@
 import Foundation
 import CoreLocation
 import UserNotifications
+import SwiftData
 
 @Observable
 final class LocationManager: NSObject, CLLocationManagerDelegate {
@@ -15,6 +16,9 @@ final class LocationManager: NSObject, CLLocationManagerDelegate {
     private let clManager = CLLocationManager()
     var authorizationStatus: CLAuthorizationStatus = .notDetermined
     var currentLocation: CLLocation? = nil
+    
+    // Reference to SwiftData context for querying fresh data
+    var modelContext: ModelContext?
 
     // MARK: - Constants
 
@@ -24,8 +28,8 @@ final class LocationManager: NSObject, CLLocationManagerDelegate {
 
     // MARK: - State
 
-    private var allAccessCodes: [AccessCode] = []
-    private var activeSet: [AccessCode] = []
+    // Cache only IDs of the active set to detect changes
+    private var activeSetIDs: Set<UUID> = []
     private var isDynamic: Bool = false
 
     override init() {
@@ -55,11 +59,33 @@ final class LocationManager: NSObject, CLLocationManagerDelegate {
         clManager.startMonitoringSignificantLocationChanges()
     }
 
+    // MARK: - Data Fetching
+
+    /// Fetches all non-silenced access codes with valid coordinates from SwiftData.
+    private func fetchAllAccessCodes() -> [AccessCode]? {
+        guard let context = modelContext else { return nil }
+        
+        let descriptor = FetchDescriptor<AccessCode>(
+            predicate: #Predicate<AccessCode> { code in
+                code.isSilenced != true
+                && code.latitude != nil
+                && code.longitude != nil
+            },
+            sortBy: [SortDescriptor(\.label)]
+        )
+        
+        return try? context.fetch(descriptor)
+    }
+
     // MARK: - Public Interface
 
     /// Called on app launch and whenever the full entry list changes.
-    func restartAllMonitoring(accessCodes: [AccessCode]) {
-        allAccessCodes = accessCodes
+    func restartAllMonitoring(context: ModelContext) {
+        self.modelContext = context
+        
+        // Fetch fresh data from SwiftData
+        guard let accessCodes = fetchAllAccessCodes() else { return }
+        
         stopAllMonitoring()
 
         if accessCodes.count <= dynamicThreshold {
@@ -103,7 +129,6 @@ final class LocationManager: NSObject, CLLocationManagerDelegate {
         }
         // If we were in dynamic mode, recalculate
         if isDynamic {
-            allAccessCodes.removeAll { $0.id == accessCode.id }
             recalculateActiveSet()
         }
     }
@@ -113,16 +138,13 @@ final class LocationManager: NSObject, CLLocationManagerDelegate {
     /// Recalculates which 15 entries to monitor based on current location.
     /// Falls back to first 15 alphabetically if location is unavailable.
     func recalculateActiveSet() {
-        guard !allAccessCodes.isEmpty else { return }
-
-        let activeCodes = allAccessCodes.filter {
-            $0.isSilenced != true
-            && $0.latitude != nil
-            && $0.longitude != nil
+        guard let allAccessCodes = fetchAllAccessCodes(), !allAccessCodes.isEmpty else {
+            return
         }
+
         let sorted: [AccessCode]
         if let location = currentLocation {
-            sorted = activeCodes.sorted {
+            sorted = allAccessCodes.sorted {
                 let loc0 = CLLocation(
                     latitude: $0.latitude ?? 0,
                     longitude: $0.longitude ?? 0
@@ -140,26 +162,32 @@ final class LocationManager: NSObject, CLLocationManagerDelegate {
             }
         } else {
             // No location available — sort alphabetically as fallback
-            sorted = activeCodes.sorted {
+            sorted = allAccessCodes.sorted {
                 ($0.label ?? "") < ($1.label ?? "")
             }
         }
 
-        activeSet = Array(sorted.prefix(activeSetSize))
+        let newActiveSet = Array(sorted.prefix(activeSetSize))
+        let newActiveIDs = Set(newActiveSet.compactMap { $0.id })
+        
+        // Only update if the active set changed
+        guard newActiveIDs != activeSetIDs else { return }
+        
+        activeSetIDs = newActiveIDs
 
         // Stop all entry geofences
         stopAllEntryMonitoring()
 
         // Start monitoring the new active set
-        for code in activeSet {
+        for code in newActiveSet {
             startMonitoring(accessCode: code)
         }
 
         // Update the safety geofence
-        updateSafetyGeofence()
+        updateSafetyGeofence(activeSet: newActiveSet)
     }
 
-    private func updateSafetyGeofence() {
+    private func updateSafetyGeofence(activeSet: [AccessCode]) {
         // Remove existing safety geofence
         removeSafetyGeofence()
 

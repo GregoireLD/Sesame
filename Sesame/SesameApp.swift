@@ -38,10 +38,8 @@ struct SesameApp: App {
         // Migrate any plain text fields to encrypted format
         MigrationManager.migrateIfNeeded(context: context)
 
-        let descriptor = FetchDescriptor<AccessCode>()
-        if let accessCodes = try? context.fetch(descriptor) {
-            locationManager.restartAllMonitoring(accessCodes: accessCodes)
-        }
+        // Initialize location monitoring with SwiftData context
+        locationManager.restartAllMonitoring(context: context)
     }
 
     @Environment(\.scenePhase) private var scenePhase
