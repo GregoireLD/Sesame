@@ -99,23 +99,29 @@ private struct UnknownImportView: View {
     @Environment(\.dismiss) private var dismiss
 
     private var isFutureVersion: Bool {
-        // Check query items (sesame:// scheme)
-        if let components = URLComponents(url: url, resolvingAgainstBaseURL: false) {
-            let source = url.scheme == "https"
-                ? components.fragment
-                : components.queryItems.map { items in
-                    items.map { "\($0.name)=\($0.value ?? "")" }.joined(separator: "&")
-                }
-            if let paramString = source {
-                let version = paramString
-                    .split(separator: "&")
-                    .first(where: { $0.hasPrefix("v=") })
-                    .flatMap { $0.split(separator: "=").last }
-                    .flatMap { Int($0) }
-                return (version ?? 1) > 1
-            }
+        guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false) else { return false }
+        let rawSource: String?
+        if url.scheme == "https" {
+            rawSource = components.fragment
+        } else {
+            rawSource = components.queryItems?
+                .map { "\($0.name)=\($0.value ?? "")" }
+                .joined(separator: "&")
         }
-        return false
+        guard let raw = rawSource else { return false }
+        // Try Base64URL decode, fall back to raw
+        let paramString = {
+            if let decoded = ImportExport.base64URLDecode(raw), decoded.contains("=") {
+                return decoded
+            }
+            return raw
+        }()
+        let version = paramString
+            .split(separator: "&")
+            .first(where: { $0.hasPrefix("v=") })
+            .flatMap { $0.split(separator: "=").last }
+            .flatMap { Int($0) }
+        return (version ?? 1) > 1
     }
 
     var body: some View {

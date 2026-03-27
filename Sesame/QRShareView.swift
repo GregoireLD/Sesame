@@ -24,6 +24,7 @@ struct QRShareView: View {
     @AppStorage("showHiddenFeatures") private var showHiddenFeatures = false
     @AppStorage("qrIncludeCoordinates") private var includeCoordinates: Bool = true
     @AppStorage("qrUseLegacyScheme") private var useLegacyScheme: Bool = false
+    @AppStorage("qrUsePlainFragment") private var usePlainFragment: Bool = false
     
 
     var body: some View {
@@ -189,6 +190,17 @@ struct QRShareView: View {
                             .foregroundStyle(.purple)
                     }
                 }
+                Toggle(isOn: Binding(
+                    get: { usePlainFragment },
+                    set: { usePlainFragment = $0; generate() }
+                )) {
+                    Label {
+                        Text("qr.option.plain_fragment")
+                    } icon: {
+                        Image(systemName: "text.alignleft")
+                            .foregroundStyle(.purple)
+                    }
+                }
             }
         } header: {
             Text("qr.options_header")
@@ -204,7 +216,8 @@ struct QRShareView: View {
             includeLocationDetails: includeLocationDetails,
             includeComment: includeComment,
             includeCoordinates: includeCoordinates,
-            useLegacyScheme: useLegacyScheme
+            useLegacyScheme: useLegacyScheme,
+            usePlainFragment: usePlainFragment
         ) else {
             generationFailed = true
             return

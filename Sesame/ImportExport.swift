@@ -37,7 +37,8 @@ struct ImportExport {
         includeLocationDetails: Bool = false,
         includeComment: Bool = false,
         includeCoordinates: Bool = true,
-        useLegacyScheme: Bool = false
+        useLegacyScheme: Bool = false,
+        usePlainFragment: Bool = false
     ) -> URL? {
         guard let label = accessCode.label else { return nil }
 
@@ -112,15 +113,25 @@ struct ImportExport {
             }
         }
 
+        // Build the parameter string
+        var fragmentComponents = URLComponents()
+        fragmentComponents.queryItems = items
+        guard let queryString = fragmentComponents.percentEncodedQuery else { return nil }
+        
+        // Apply encoding based on usePlainFragment setting
+        let encodedParams = usePlainFragment
+            ? queryString
+            : base64URLEncode(queryString)
+        
+        // Apply parameters based on scheme
         if useLegacyScheme {
-            components.queryItems = items
-            return components.url
+            // For sesame://, use fragment (to respect usePlainFragment)
+            guard let base = components.url?.absoluteString else { return nil }
+            return URL(string: "\(base)#\(encodedParams)")
         } else {
-            var fragmentComponents = URLComponents()
-            fragmentComponents.queryItems = items
-            guard let encodedQuery = fragmentComponents.percentEncodedQuery else { return nil }
-            let urlString = "https://sesame-app.com/share#\(encodedQuery)"
-            return URL(string: urlString)
+            // For https://, use fragment (Universal Link standard)
+            guard let base = components.url?.absoluteString else { return nil }
+            return URL(string: "\(base)#\(encodedParams)")
         }
     }
 
@@ -145,13 +156,27 @@ struct ImportExport {
     // MARK: - Import: URL Parsing
 
     static func parse(url: URL) -> ParsedImport? {
-        // For https:// Universal Links, parameters are in the fragment
-        // For sesame:// legacy scheme, parameters are in query items
+        // Parameters can be in fragment (for both https:// and sesame://)
+        // or in query string (for legacy sesame:// URLs)
         let paramString: String?
-        if url.scheme == "https" {
-            paramString = url.fragment
-        } else {
-            paramString = url.query
+        
+        // First check for fragment (new format for both schemes)
+        if let fragment = url.fragment, !fragment.isEmpty {
+            // Try Base64URL decode first, fall back to plain if it fails
+            if let decoded = base64URLDecode(fragment),
+               decoded.contains("=") {
+                paramString = decoded
+            } else {
+                // Plain text fallback
+                paramString = fragment
+            }
+        }
+        // Fall back to query string (legacy sesame:// format)
+        else if let query = url.query, !query.isEmpty {
+            paramString = query
+        }
+        else {
+            paramString = nil
         }
 
         guard let paramString,
@@ -187,5 +212,28 @@ struct ImportExport {
             latitude: param("lat").flatMap { Double($0) },
             longitude: param("lon").flatMap { Double($0) }
         )
+    }
+    
+    // MARK: - Tools
+    
+    private static func base64URLEncode(_ string: String) -> String {
+        Data(string.utf8)
+            .base64EncodedString()
+            .replacingOccurrences(of: "+", with: "-")
+            .replacingOccurrences(of: "/", with: "_")
+            .replacingOccurrences(of: "=", with: "")
+    }
+
+    static func base64URLDecode(_ string: String) -> String? {
+        var base64 = string
+            .replacingOccurrences(of: "-", with: "+")
+            .replacingOccurrences(of: "_", with: "/")
+        // Re-add padding
+        let remainder = base64.count % 4
+        if remainder > 0 {
+            base64 += String(repeating: "=", count: 4 - remainder)
+        }
+        guard let data = Data(base64Encoded: base64) else { return nil }
+        return String(data: data, encoding: .utf8)
     }
 }
