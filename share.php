@@ -1,17 +1,18 @@
 <?php
 $langs = [
-  'fr' => ['title' => 'Sesame — Code d\'accès partagé', 'desc' => 'Quelqu\'un a partagé un code d\'accès avec vous. Ouvrez pour le voir.'],
-  'de' => ['title' => 'Sesame — Geteilter Zugangscode', 'desc' => 'Jemand hat einen Zugangscode mit dir geteilt. Öffnen, um ihn anzuzeigen.'],
-  'es' => ['title' => 'Sesame — Código de acceso compartido', 'desc' => 'Alguien ha compartido un código de acceso contigo. Ábrelo para verlo.'],
-  'it' => ['title' => 'Sesame — Codice di accesso condiviso', 'desc' => 'Qualcuno ha condiviso un codice di accesso con te. Aprilo per vederlo.'],
-  'ja' => ['title' => 'Sesame — アクセスコードが共有されました', 'desc' => 'アクセスコードが共有されました。開いて確認してください。'],
-  'ko' => ['title' => 'Sesame — 출입 코드가 공유되었습니다', 'desc' => '누군가 출입 코드를 공유했습니다. 열어서 확인하세요.'],
-  'zh' => ['title' => 'Sesame — 共享的门禁代码', 'desc' => '有人与您共享了门禁代码。打开查看。'],
-  'ar' => ['title' => 'Sesame — رمز دخول مشترك', 'desc' => 'شارك شخص ما رمز دخول معك. افتحه لرؤيته.'],
+  'fr' => ['title' => 'Sesame — Code d\'accès partagé', 'desc' => 'Quelqu\'un a partagé un code d\'accès avec vous. Ouvrez pour le voir.', 'image' => 'https://sesame-app.com/images/sesame_social_fr.png'],
+  'de' => ['title' => 'Sesame — Geteilter Zugangscode', 'desc' => 'Jemand hat einen Zugangscode mit dir geteilt. Öffnen, um ihn anzuzeigen.', 'image' => 'https://sesame-app.com/images/sesame_social_de.png'],
+  'es' => ['title' => 'Sesame — Código de acceso compartido', 'desc' => 'Alguien ha compartido un código de acceso contigo. Ábrelo para verlo.', 'image' => 'https://sesame-app.com/images/sesame_social_es.png'],
+  'it' => ['title' => 'Sesame — Codice di accesso condiviso', 'desc' => 'Qualcuno ha condiviso un codice di accesso con te. Aprilo per vederlo.', 'image' => 'https://sesame-app.com/images/sesame_social_it.png'],
+  'ja' => ['title' => 'Sesame — アクセスコードが共有されました', 'desc' => 'アクセスコードが共有されました。開いて確認してください。', 'image' => 'https://sesame-app.com/images/sesame_social_ja.png'],
+  'ko' => ['title' => 'Sesame — 출입 코드가 공유되었습니다', 'desc' => '누군가 출입 코드를 공유했습니다. 열어서 확인하세요.', 'image' => 'https://sesame-app.com/images/sesame_social_ko.png'],
+  'zh' => ['title' => 'Sesame — 共享的门禁代码', 'desc' => '有人与您共享了门禁代码。打开查看。', 'image' => 'https://sesame-app.com/images/sesame_social_zh.png'],
+  'ar' => ['title' => 'Sesame — رمز دخول مشترك', 'desc' => 'شارك شخص ما رمز دخول معك. افتحه لرؤيته.', 'image' => 'https://sesame-app.com/images/sesame_social_ar.png'],
 ];
 
 $title = 'Sesame — Shared Access Code';
 $desc  = 'Someone shared an access code with you. Open to view it.';
+$ogimage = 'https://sesame-app.com/images/sesame_social_en.png';
 $url   = 'https://sesame-app.com/share';
 
 $accept = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '';
@@ -19,6 +20,7 @@ foreach ($langs as $code => $strings) {
   if (stripos($accept, $code) !== false) {
     $title = $strings['title'];
     $desc  = $strings['desc'];
+    $ogimage = $strings['image'];
     break;
   }
 }
@@ -35,10 +37,10 @@ foreach ($langs as $code => $strings) {
   <meta property="og:description" content="<?= htmlspecialchars($desc) ?>" />
   <meta property="og:url" content="<?= htmlspecialchars($url) ?>" />
 
-  <meta property="og:image" content="https://sesame-app.com/images/sesame_social.png" />
+  <meta property="og:image" content="<?= htmlspecialchars($ogimage) ?>" />
   <meta property="og:type" content="website" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:image" content="https://sesame-app.com/images/sesame_social.png" />
+  <meta name="twitter:image" content="<?= htmlspecialchars($ogimage) ?>" />
 
   <link rel="icon" href="https://sesame-app.com/images/sesame.png" />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
@@ -245,22 +247,38 @@ foreach ($langs as $code => $strings) {
     }
 
     .code-display {
-      background: var(--bg-code);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 14px 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
+        background: var(--bg-code);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 14px 16px;
+        display: flex;
+        align-items: flex-start; /* ← change from center to flex-start for multiline */
+        justify-content: space-between;
+        gap: 12px;
     }
 
     .code-value {
-      font-family: 'DM Sans', sans-serif;
-      font-size: 28px;
-      font-weight: 500;
-      color: var(--gold);
-      line-height: 1;
+        font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--gold);
+        line-height: 1;
+        display: inline-block;
+        transition: color 0.15s ease, background 0.15s ease;
+        padding: 2px 6px;
+        border-radius: 5px;
+        word-break: break-all;
+        min-width: 0;
+        flex: 1;
+    }
+
+    .code-value.hidden {
+        color: transparent;
+        background: rgba(201,168,76,0.18);
+        border-radius: 5px;
+        user-select: none;
+        -webkit-user-select: none;
+        filter: blur(10px);
     }
 
     .reveal-btn {
@@ -420,6 +438,18 @@ foreach ($langs as $code => $strings) {
       'zh-hant': '沒有 Sesame？在 App Store 下載',
       ar: 'ليس لديك Sesame؟ حمّله من App Store'
     },
+    download_ios_soon: {
+      en: 'iOS version coming soon',
+      fr: 'Version iOS bientôt disponible',
+      de: 'iOS-Version demnächst verfügbar',
+      es: 'Versión iOS próximamente',
+      it: 'Versione iOS in arrivo',
+      ja: 'iOSバージョン近日公開',
+      ko: 'iOS 버전 출시 예정',
+      'zh-hans': 'iOS 版本即将推出',
+      'zh-hant': 'iOS 版本即將推出',
+      ar: 'إصدار iOS قريباً'
+    },
     download_android: {
       en: 'Android version coming soon',
       fr: 'Version Android bientôt disponible',
@@ -498,6 +528,18 @@ foreach ($langs as $code => $strings) {
       es: 'Actualizar Sesame', it: 'Aggiorna Sesame',
       ja: 'Sesameを更新', ko: 'Sesame 업데이트',
       'zh-hans': '更新 Sesame', 'zh-hant': '更新 Sesame', ar: 'تحديث Sesame'
+    },
+    no_code: {
+      en: 'No code — check location details',
+      fr: 'Pas de code — voir les détails d\'accès',
+      de: 'Kein Code — Standortdetails prüfen',
+      es: 'Sin código — ver detalles de ubicación',
+      it: 'Nessun codice — vedere i dettagli posizione',
+      ja: 'コードなし — 場所の詳細を確認',
+      ko: '코드 없음 — 위치 세부 정보 확인',
+      'zh-hans': '无代码 — 查看位置详情',
+      'zh-hant': '無代碼 — 查看位置詳情',
+      ar: 'لا يوجد رمز — راجع تفاصيل الموقع'
     }
   };
 
@@ -561,19 +603,46 @@ foreach ($langs as $code => $strings) {
   function parseFragment() {
     const hash = window.location.hash.slice(1);
     if (!hash) return null;
+
+    let paramString = hash;
+    
+    // Try Base64URL decode
+    try {
+        const base64 = hash
+            .replace(/-/g, '+')
+            .replace(/_/g, '/')
+            + '=='.slice(0, (4 - hash.length % 4) % 4);
+        
+        const decoded = atob(base64);
+        
+        // Check if decoded looks like our query format
+        // Should start with "v=1&" or contain "&label="
+        if (decoded.startsWith('v=') || decoded.includes('&label=') || decoded.includes('label=')) {
+            paramString = decoded;
+        }
+    } catch (e) {
+        // Decode failed, use raw hash
+    }
+
+    // Parse parameters
     const params = {};
-    hash.split('&').forEach(pair => {
-      const eqIndex = pair.indexOf('=');
-      if (eqIndex === -1) return;
-      const key = decodeURIComponent(pair.slice(0, eqIndex));
-      const value = decodeURIComponent(pair.slice(eqIndex + 1));
-      if (key) params[key] = value;
+    paramString.split('&').forEach(pair => {
+        const eqIndex = pair.indexOf('=');
+        if (eqIndex === -1) return;
+        const key = decodeURIComponent(pair.slice(0, eqIndex));
+        const value = decodeURIComponent(pair.slice(eqIndex + 1));
+        if (key) params[key] = value;
     });
+    
     return Object.keys(params).length ? params : null;
   }
 
   function buildSesameURL(params) {
-    const items = [['v','1'],['label',params.label],['address',params.address],['code',params.code]];
+    const items = [['v','1'], ['label', params.label]];
+    if (params.address) items.push(['address', params.address]);
+    if (params.code)    items.push(['code',    params.code]);
+    if (params.lat)     items.push(['lat',     params.lat]);
+    if (params.lon)     items.push(['lon',     params.lon]);
     if (params.radius)  items.push(['radius',  params.radius]);
     if (params.details) items.push(['details', params.details]);
     if (params.comment) items.push(['comment', params.comment]);
@@ -617,7 +686,11 @@ foreach ($langs as $code => $strings) {
       ? `<a href="#" class="btn-secondary" style="opacity:0.5;pointer-events:none;cursor:default;">
           ${t('download_android')}
         </a>`
-      : `<a href="${APP_STORE_URL}" class="btn-secondary">${t('download_ios')}</a>`;
+      : `<a href="#" class="btn-secondary" style="opacity:0.5;pointer-events:none;cursor:default;">
+          ${t('download_ios_soon')}
+        </a>`;
+        
+    //<a href="${APP_STORE_URL}" class="btn-secondary">${t('download_ios')}</a>`;
 
     let extraFields = '';
     if (params.details) {
@@ -636,13 +709,27 @@ foreach ($langs as $code => $strings) {
       ${renderHeader()}
       <div class="entry">
         <div class="entry-label">${esc(params.label)}</div>
-        <div class="entry-address">${iconPin}<span>${esc(params.address)}</span></div>
-        <div class="divider"></div>
+        ${params.address ? `
+        <a href="${getMapsURL(params.address, params.lat, params.lon)}"
+          class="entry-address"
+          style="text-decoration:none;">
+          ${iconPin}<span>${esc(params.address)}</span>
+        </a>
+      ` : ''}
+        ${params.code ? `
+        ${params.address ? '<div class="divider"></div>' : ''}
         <div class="code-label">${t('access_code')}</div>
         <div class="code-display">
-          <span class="code-value" id="code-value" style="letter-spacing:${codeSpacing};">${codeDisplay}</span>
-          <button class="reveal-btn" id="reveal-btn" onclick="toggleCode()">${btnLabel}</button>
+          <span class="code-value hidden" id="code-value">${esc(params.code)}</span>
+          <button class="reveal-btn" id="reveal-btn" onclick="toggleCode()">${t('show')}</button>
         </div>
+      ` : `
+        <div class="divider"></div>
+        <div class="code-label">${t('access_code')}</div>
+        <div class="code-display" style="justify-content:center;">
+          <span style="font-size:13px;color:var(--text-tertiary);">${t('no_code')}</span>
+        </div>
+      `}
         ${extraFields ? `<div class="extra-fields">${extraFields}</div>` : ''}
       </div>
       <div class="actions">
@@ -678,8 +765,16 @@ foreach ($langs as $code => $strings) {
   }
 
   function toggleCode() {
-    codeRevealed = !codeRevealed;
-    if (currentParams) renderEntry(currentParams);
+      codeRevealed = !codeRevealed;
+      const display = document.getElementById('code-value');
+      const btn = document.getElementById('reveal-btn');
+      if (codeRevealed) {
+          display.classList.remove('hidden');
+          btn.textContent = t('hide');
+      } else {
+          display.classList.add('hidden');
+          btn.textContent = t('show');
+      }
   }
 
   // ── Init ─────────────────────────────────────────────────
@@ -703,7 +798,7 @@ foreach ($langs as $code => $strings) {
       return;
     }
 
-    if (!params.label || !params.address || !params.code) {
+    if (!params.label) {
       currentMode = 'error';
     } else if (params.v && params.v !== '1') {
       currentMode = 'update';
@@ -719,7 +814,7 @@ foreach ($langs as $code => $strings) {
         window.location.replace(HOMEPAGE_URL);
         return;
       }
-      if (!params.label || !params.address || !params.code) {
+      if (!params.label) {
         currentMode = 'error';
         currentParams = null;
       } else if (params.v && params.v !== '1') {
@@ -735,6 +830,29 @@ foreach ($langs as $code => $strings) {
     // Apply language and render
     applyLang(lang, render);
   })();
+
+  function getMapsURL(address, lat, lon) {
+    if (!address) return '#'; // Safety check
+    
+    const ua = navigator.userAgent || '';
+    const isIOS = /iphone|ipad|ipod/i.test(ua);
+    const isMac = /macintosh/i.test(ua) && !('ontouchend' in document);
+      
+    if (isIOS || isMac) {
+        // Apple Maps
+        if (lat && lon) {
+            return `maps://maps.apple.com/?ll=${lat},${lon}&q=${encodeURIComponent(address)}`;
+        }
+        return `maps://maps.apple.com/?q=${encodeURIComponent(address)}`;
+    } else {
+        // Google Maps for Android and everything else
+        if (lat && lon) {
+            return `https://www.google.com/maps/search/?api=1&query=${lat},${lon}`;
+        }
+        return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
+    }
+  }
+
 </script>
 </body>
 </html>
