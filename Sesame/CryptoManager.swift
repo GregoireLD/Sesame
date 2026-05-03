@@ -28,8 +28,8 @@ struct CryptoManager {
     // MARK: - Constants
 
     private static let keyTag = "paris.com.duval.sesame.encryptionKey"
-    private static let currentVersion = "v1"
-    private static let separator = ":"
+    nonisolated private static let currentVersion = "v1"
+    nonisolated private static let separator = ":"
 
     // MARK: - Key Management
 
