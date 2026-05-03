@@ -71,7 +71,7 @@ struct ImportExport {
         ]
 
         // address is optional — only include if present
-        if let address = accessCode.address {
+        if let address = accessCode.decryptedAddress {
             items.append(URLQueryItem(name: "address", value: address))
         }
 
@@ -81,8 +81,8 @@ struct ImportExport {
         }
 
         if includeCoordinates,
-           let lat = accessCode.latitude,
-           let lon = accessCode.longitude {
+           let lat = accessCode.decryptedLatitude,
+           let lon = accessCode.decryptedLongitude {
             items.append(URLQueryItem(name: "lat", value: String(format: "%.5f", lat)))
             items.append(URLQueryItem(name: "lon", value: String(format: "%.5f", lon)))
         }

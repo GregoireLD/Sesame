@@ -19,6 +19,7 @@ enum SortOrder: String {
 struct ContentView: View {
 
     @Environment(LocationManager.self) private var locationManager
+    @Environment(KeyAvailabilityMonitor.self) private var keyMonitor
     @Environment(\.modelContext) private var modelContext
     @Query private var accessCodes: [AccessCode]
 
@@ -26,10 +27,11 @@ struct ContentView: View {
     @State private var showingAddSheet = false
     @State private var selectedCode: AccessCode? = nil
     @Binding var selectedEntryID: String?
-    
+
     @State private var showingAbout: Bool = false
     @State private var searchText: String = ""
-    
+    @State private var showingKeyRecovery: Bool = false
+
     @State private var notificationsAuthorized: Bool = true
     
     init(selectedEntryID: Binding<String?> = .constant(nil)) {
@@ -59,8 +61,8 @@ struct ContentView: View {
         if effectiveSortByDistance,
            let location = locationManager.currentLocation {
             return accessCodes.sorted {
-                let loc0 = CLLocation(latitude: $0.latitude ?? 0, longitude: $0.longitude ?? 0)
-                let loc1 = CLLocation(latitude: $1.latitude ?? 0, longitude: $1.longitude ?? 0)
+                let loc0 = CLLocation(latitude: $0.decryptedLatitude ?? 0, longitude: $0.decryptedLongitude ?? 0)
+                let loc1 = CLLocation(latitude: $1.decryptedLatitude ?? 0, longitude: $1.decryptedLongitude ?? 0)
                 return location.distance(from: loc0) < location.distance(from: loc1)
             }
         }
@@ -73,7 +75,7 @@ struct ContentView: View {
         guard !searchText.isEmpty else { return sortedCodes }
         return sortedCodes.filter { code in
             (code.label ?? "").localizedCaseInsensitiveContains(searchText) ||
-            (code.address ?? "").localizedCaseInsensitiveContains(searchText)
+            (code.decryptedAddress ?? "").localizedCaseInsensitiveContains(searchText)
         }
     }
 
@@ -223,7 +225,7 @@ struct ContentView: View {
                 Text(code.label ?? "")
                     .font(.headline)
                     .foregroundStyle(.primary)
-                Text(code.address ?? "")
+                Text(code.decryptedAddress ?? "")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                 HStack {
@@ -246,7 +248,7 @@ struct ContentView: View {
                                         .foregroundStyle(.tertiary)
                                         .font(.caption)
                                 }
-                        if code.latitude == nil && code.longitude == nil {
+                        if code.encryptedLatitude == nil && code.encryptedLongitude == nil {
                             Image(systemName: "location.slash.fill")
                                 .foregroundStyle(.orange)
                                 .font(.caption)
@@ -254,8 +256,8 @@ struct ContentView: View {
                     }
                     if effectiveSortByDistance,
                        let location = locationManager.currentLocation,
-                       let lat = code.latitude,
-                       let lon = code.longitude {
+                       let lat = code.decryptedLatitude,
+                       let lon = code.decryptedLongitude {
                         Spacer()
                         let distance = location.distance(from: CLLocation(
                             latitude: lat,
@@ -290,13 +292,13 @@ struct ContentView: View {
         }
         .swipeActions(edge: .trailing, allowsFullSwipe: true) {
             Button {
-                if code.latitude != nil && code.longitude != nil {
+                if code.encryptedLatitude != nil && code.encryptedLongitude != nil {
                     openInMaps(accessCode: code)
                 }
             } label: {
                 Label("action.maps", systemImage: "map.fill")
             }
-            .tint(code.latitude != nil && code.longitude != nil ? .blue : .gray)
+            .tint(code.encryptedLatitude != nil && code.encryptedLongitude != nil ? .blue : .gray)
         }
     }
 
@@ -343,6 +345,9 @@ struct ContentView: View {
     @ViewBuilder
     private var authorizationBanner: some View {
         VStack(spacing: 12) {
+            if keyMonitor.state == .unavailableWithData {
+                keyUnavailableBanner
+            }
             if locationManager.authorizationStatus != .authorizedAlways
                 && !locationBannerDismissed {
                 bannerView(
@@ -389,6 +394,39 @@ struct ContentView: View {
         .padding(.horizontal)
         .padding(.bottom, 8)
         .onAppear { checkNotificationStatus() }
+    }
+
+    private var keyUnavailableBanner: some View {
+        VStack(spacing: 8) {
+            Label(String(localized: "key.unavailable.banner"), systemImage: "lock.trianglebadge.exclamationmark.fill")
+                .font(.footnote)
+                .multilineTextAlignment(.center)
+                .foregroundStyle(.orange)
+            Button(String(localized: "key.unavailable.action")) {
+                showingKeyRecovery = true
+            }
+            .font(.footnote)
+            .buttonStyle(.bordered)
+            .tint(.orange)
+        }
+        .padding()
+        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
+        .onAppear {
+            Task {
+                while keyMonitor.state == .unavailableWithData {
+                    try? await Task.sleep(for: .seconds(5))
+                    keyMonitor.check(context: modelContext)
+                }
+            }
+        }
+        .sheet(isPresented: $showingKeyRecovery) {
+            KeyRecoveryView(
+                onReset: {
+                    keyMonitor.resetAllData(context: modelContext)
+                    locationManager.restartAllMonitoring(context: modelContext)
+                }
+            )
+        }
     }
 
     private func bannerView(
@@ -451,8 +489,8 @@ struct ContentView: View {
     }
     
     private func openInMaps(accessCode: AccessCode) {
-        guard let lat = accessCode.latitude,
-              let lon = accessCode.longitude,
+        guard let lat = accessCode.decryptedLatitude,
+              let lon = accessCode.decryptedLongitude,
               let label = accessCode.label else { return }
         let location = CLLocation(latitude: lat, longitude: lon)
         let mapItem = MKMapItem(location: location, address: nil)

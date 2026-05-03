@@ -410,8 +410,9 @@ struct AddEditView: View {
         // Handle edit pre-population
         guard let existing = existingCode else { return }
         label = existing.label ?? ""
-        address = existing.address ?? ""
-        if let lat = existing.latitude, let lon = existing.longitude {
+        address = existing.decryptedAddress ?? ""
+        if let lat = existing.decryptedLatitude, let lon = existing.decryptedLongitude,
+           lat != 0 || lon != 0 {
             latitude = lat
             longitude = lon
             geocodingSuccess = true
@@ -422,12 +423,6 @@ struct AddEditView: View {
         }
         radiusMeters = existing.radiusMeters ?? 100.0
         isSilenced = existing.isSilenced ?? false
-
-        // Only mark geocoding success if we have valid coordinates
-        if let lat = existing.latitude, let lon = existing.longitude,
-           lat != 0 || lon != 0 {
-            geocodingSuccess = true
-        }
 
         if let storedCode = existing.code {
             switch CryptoManager.decrypt(storedCode) {
@@ -591,13 +586,47 @@ struct AddEditView: View {
             encryptedComment = nil
         }
 
+        // Encrypt address
+        let encryptedAddress: String?
+        if !address.isEmpty {
+            switch CryptoManager.encrypt(address) {
+            case .success(let enc):
+                encryptedAddress = enc
+            default:
+                keyUnavailable = true
+                return
+            }
+        } else {
+            encryptedAddress = nil
+        }
+
+        // Encrypt coordinates
+        let encryptedLatitude: String?
+        let encryptedLongitude: String?
+        if let lat = latitude, let lon = longitude {
+            switch (CryptoManager.encrypt(String(lat)), CryptoManager.encrypt(String(lon))) {
+            case (.success(let encLat), .success(let encLon)):
+                encryptedLatitude = encLat
+                encryptedLongitude = encLon
+            default:
+                keyUnavailable = true
+                return
+            }
+        } else {
+            encryptedLatitude = nil
+            encryptedLongitude = nil
+        }
+
         if let existing = existingCode {
             locationManager.stopMonitoring(accessCode: existing)
             existing.label = label
             existing.code = encryptedCode
-            existing.address = address.isEmpty ? nil : address
-            existing.latitude = latitude
-            existing.longitude = longitude
+            existing.encryptedAddress = encryptedAddress
+            existing.encryptedLatitude = encryptedLatitude
+            existing.encryptedLongitude = encryptedLongitude
+            existing.address = nil
+            existing.latitude = nil
+            existing.longitude = nil
             existing.radiusMeters = radiusMeters
             existing.isSilenced = isSilenced
             existing.locationDetails = encryptedLocationDetails
@@ -608,9 +637,9 @@ struct AddEditView: View {
             let newCode = AccessCode(
                 label: label,
                 code: encryptedCode,
-                address: address.isEmpty ? nil : address,
-                latitude: latitude,
-                longitude: longitude,
+                encryptedAddress: encryptedAddress,
+                encryptedLatitude: encryptedLatitude,
+                encryptedLongitude: encryptedLongitude,
                 radiusMeters: radiusMeters,
                 isSilenced: isSilenced,
                 locationDetails: encryptedLocationDetails,

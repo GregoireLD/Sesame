@@ -12,6 +12,7 @@ import SwiftData
 struct SesameApp: App {
     let locationManager = LocationManager()
     let notificationManager = NotificationManager.shared
+    let keyMonitor = KeyAvailabilityMonitor()
     let container: ModelContainer
     
     // This holds the ID of the entry to open when a notification is tapped
@@ -35,6 +36,10 @@ struct SesameApp: App {
         notificationManager.modelContainer = container
         let context = ModelContext(container)
 
+        // Check key availability before migration so we don't attempt to
+        // encrypt plaintext entries with a key that may not be the right one
+        keyMonitor.check(context: context)
+
         // Migrate any plain text fields to encrypted format
         MigrationManager.migrateIfNeeded(context: context)
 
@@ -48,6 +53,7 @@ struct SesameApp: App {
         WindowGroup {
             ContentView(selectedEntryID: $selectedEntryID)
                 .environment(locationManager)
+                .environment(keyMonitor)
                 .onOpenURL { url in
                     if url.scheme == "sesame", url.host == "import" {
                         importURL = url
@@ -78,10 +84,12 @@ struct SesameApp: App {
         .onChange(of: scenePhase) { _, newPhase in
             switch newPhase {
             case .active:
-                // App came to foreground — start precise location
-                // and recalculate active set
+                // App came to foreground — start precise location,
+                // recalculate active set, and re-check key availability
+                // (handles the case where iCloud Keychain syncs while backgrounded)
                 locationManager.startUpdatingLocation()
                 locationManager.recalculateActiveSet()
+                keyMonitor.check(context: ModelContext(container))
             case .background:
                 // App went to background — switch to battery-friendly
                 // significant location changes only

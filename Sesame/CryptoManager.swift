@@ -33,15 +33,19 @@ struct CryptoManager {
 
     // MARK: - Key Management
 
+    /// Read-only key fetch. Returns nil if the key hasn't arrived yet (e.g. iCloud Keychain
+    /// still syncing on a new device). Never creates a key — safe to call on the decrypt path.
+    static func getKey() -> SymmetricKey? {
+        return loadKey()
+    }
+
     /// Retrieves the encryption key from iCloud Keychain.
     /// If no key exists yet, generates one and stores it.
-    /// Returns nil if Keychain is unavailable (e.g. iCloud Keychain not yet synced).
+    /// Only call this on the encrypt path (save), never on decrypt.
     static func getOrCreateKey() -> SymmetricKey? {
-        // Try to load existing key
         if let existingKey = loadKey() {
             return existingKey
         }
-        // No key found — generate and store a new one
         let newKey = SymmetricKey(size: .bits256)
         let keyData = newKey.withUnsafeBytes { Data($0) }
         if storeKey(keyData) {
@@ -63,6 +67,15 @@ struct CryptoManager {
         guard status == errSecSuccess,
               let keyData = result as? Data else { return nil }
         return SymmetricKey(data: keyData)
+    }
+
+    static func deleteKey() {
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrAccount as String: keyTag,
+            kSecAttrSynchronizable as String: kCFBooleanTrue!
+        ]
+        SecItemDelete(query as CFDictionary)
     }
 
     private static func storeKey(_ keyData: Data) -> Bool {
@@ -134,7 +147,7 @@ struct CryptoManager {
     }
 
     private static func decryptV1(ciphertextBase64: String) -> DecryptionStatus {
-        guard let key = getOrCreateKey() else {
+        guard let key = getKey() else {
             return .keyUnavailable
         }
         guard let combined = Data(base64Encoded: ciphertextBase64) else {
@@ -155,12 +168,12 @@ struct CryptoManager {
     // MARK: - Helpers
 
     /// Returns true if a stored value is already encrypted in any known version
-    static func isEncrypted(_ value: String) -> Bool {
+    nonisolated static func isEncrypted(_ value: String) -> Bool {
         return value.hasPrefix("v1\(separator)")
     }
 
     /// Returns true if a stored value was encrypted by an unknown future version
-    static func isFutureVersion(_ value: String) -> Bool {
+    nonisolated static func isFutureVersion(_ value: String) -> Bool {
         guard value.contains(separator) else { return false }
         let version = String(value.split(separator: Character(separator),
                                         maxSplits: 1)[0])

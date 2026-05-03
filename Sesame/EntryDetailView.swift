@@ -19,7 +19,6 @@ struct EntryDetailView: View {
     @State private var showingCode: Bool = false
     @State private var showingEdit: Bool = false
     @State private var showingQRShare: Bool = false
-    @State private var keyUnavailable: Bool = false
     @State private var shouldDismiss: Bool = false
 
     private var plainCode: String? {
@@ -58,7 +57,7 @@ struct EntryDetailView: View {
     }
 
     private var isUnresolved: Bool {
-        accessCode.latitude == nil && accessCode.longitude == nil
+        accessCode.encryptedLatitude == nil && accessCode.encryptedLongitude == nil
     }
 
     private var formattedRadius: String {
@@ -95,6 +94,14 @@ struct EntryDetailView: View {
                         Label {
                             Text("entry.requires_newer_version")
                                 .foregroundStyle(.orange)
+                        } icon: {
+                            Image(systemName: "lock.trianglebadge.exclamationmark.fill")
+                                .foregroundStyle(.orange)
+                        }
+                    } else if accessCode.code != nil && plainCode == nil {
+                        Label {
+                            Text("key.unavailable.detail")
+                                .foregroundStyle(.secondary)
                         } icon: {
                             Image(systemName: "lock.trianglebadge.exclamationmark.fill")
                                 .foregroundStyle(.orange)
@@ -137,7 +144,7 @@ struct EntryDetailView: View {
 
                 // ── Address ────────────────────────────────────
                 Section {
-                    if let address = accessCode.address, !address.isEmpty {
+                    if let address = accessCode.decryptedAddress, !address.isEmpty {
                         Button {
                             openInMaps()
                         } label: {
@@ -285,20 +292,12 @@ struct EntryDetailView: View {
             .sheet(isPresented: $showingQRShare) {
                 QRShareView(accessCode: accessCode)
             }
-            .alert(
-                String(localized: "error.key_unavailable.title"),
-                isPresented: $keyUnavailable
-            ) {
-                Button(String(localized: "action.ok"), role: .cancel) { }
-            } message: {
-                Text("error.key_unavailable.message")
-            }
         }
     }
 
     private func openInMaps() {
-        guard let lat = accessCode.latitude,
-              let lon = accessCode.longitude,
+        guard let lat = accessCode.decryptedLatitude,
+              let lon = accessCode.decryptedLongitude,
               let label = accessCode.label else { return }
         let location = CLLocation(latitude: lat, longitude: lon)
         let mapItem = MKMapItem(location: location, address: nil)

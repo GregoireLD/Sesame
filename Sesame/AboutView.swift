@@ -19,11 +19,16 @@ struct AboutView: View {
     @AppStorage("notificationBannerDismissed") private var notificationBannerDismissed = false
 
     @Environment(LocationManager.self) private var locationManager
+    @Environment(KeyAvailabilityMonitor.self) private var keyMonitor
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
-        @State private var showingOnboarding = false
-    
+    @State private var showingOnboarding = false
+
     @AppStorage("showHiddenFeatures") private var showHiddenFeatures = false
     @State private var versionPressCount = 0
+
+    @State private var countdown: Int? = nil
+    @State private var countdownTask: Task<Void, Never>? = nil
+    @State private var showingSimulateAlert = false
     
     private var appVersion: String {
         Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "—"
@@ -185,6 +190,37 @@ struct AboutView: View {
                             .foregroundStyle(.purple)
                     }
                 }
+
+                Button { } label: {
+                    Label {
+                        if let count = countdown {
+                            Text("\(count)")
+                                .monospacedDigit()
+                                .contentTransition(.numericText(countsDown: true))
+                        } else {
+                            Text("Simulate broken key")
+                        }
+                    } icon: {
+                        Image(systemName: "tree.fill")
+                            .foregroundStyle(.red)
+                    }
+                }
+                .simultaneousGesture(
+                    DragGesture(minimumDistance: 0)
+                        .onChanged { _ in if countdown == nil { startCountdown() } }
+                        .onEnded { _ in stopCountdown() }
+                )
+                .alert("Simulate broken key?", isPresented: $showingSimulateAlert) {
+                    Button("Wait", role: .cancel) {
+                        stopCountdown()
+                    }
+                    Button("Simulate", role: .destructive) {
+                        keyMonitor.simulateBrokenKey()
+                        dismiss()
+                    }
+                } message: {
+                    Text("This will show the key unavailable banner as if iCloud Keychain had failed. The app will re-check periodically.")
+                }
             }
         } footer: {
             HStack {
@@ -200,7 +236,28 @@ struct AboutView: View {
     }
     
     // MARK: - Logic
-    
+
+    private func startCountdown() {
+        countdown = 10
+        countdownTask = Task { @MainActor in
+            for i in stride(from: 10, through: 0, by: -1) {
+                guard countdown != nil else { return }
+                withAnimation { countdown = i }
+                if i == 0 { break }
+                try? await Task.sleep(for: .seconds(1))
+            }
+            guard countdown != nil else { return }
+            countdown = nil
+            showingSimulateAlert = true
+        }
+    }
+
+    private func stopCountdown() {
+        countdownTask?.cancel()
+        countdownTask = nil
+        countdown = nil
+    }
+
     private func toggleHiddenFeatures() {
         let generator = UIImpactFeedbackGenerator(style: .medium)
         generator.impactOccurred()

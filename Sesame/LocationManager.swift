@@ -68,8 +68,8 @@ final class LocationManager: NSObject, CLLocationManagerDelegate {
         let descriptor = FetchDescriptor<AccessCode>(
             predicate: #Predicate<AccessCode> { code in
                 code.isSilenced != true
-                && code.latitude != nil
-                && code.longitude != nil
+                && code.encryptedLatitude != nil
+                && code.encryptedLongitude != nil
             },
             sortBy: [SortDescriptor(\.label)]
         )
@@ -103,8 +103,8 @@ final class LocationManager: NSObject, CLLocationManagerDelegate {
 
     /// Called when a single entry is added.
     func startMonitoring(accessCode: AccessCode) {
-        guard let lat = accessCode.latitude,
-              let lon = accessCode.longitude,
+        guard let lat = accessCode.decryptedLatitude,
+              let lon = accessCode.decryptedLongitude,
               let radius = accessCode.radiusMeters,
               let id = accessCode.id else { return }
 
@@ -146,18 +146,19 @@ final class LocationManager: NSObject, CLLocationManagerDelegate {
         if let location = currentLocation {
             sorted = allAccessCodes.sorted {
                 let loc0 = CLLocation(
-                    latitude: $0.latitude ?? 0,
-                    longitude: $0.longitude ?? 0
+                    latitude: $0.decryptedLatitude ?? 0,
+                    longitude: $0.decryptedLongitude ?? 0
                 )
                 let loc1 = CLLocation(
-                    latitude: $1.latitude ?? 0,
-                    longitude: $1.longitude ?? 0
+                    latitude: $1.decryptedLatitude ?? 0,
+                    longitude: $1.decryptedLongitude ?? 0
                 )
                 // Sort by distance to near edge rather than centre, so entries with
                 // large radii that we're close to triggering rank above distant entries
                 // with small radii whose centres happen to be closer.
                 let edge0 = max(0, location.distance(from: loc0) - ($0.radiusMeters ?? 100))
                 let edge1 = max(0, location.distance(from: loc1) - ($1.radiusMeters ?? 100))
+
                 return edge0 < edge1
             }
         } else {
@@ -201,7 +202,7 @@ final class LocationManager: NSObject, CLLocationManagerDelegate {
         // new entries beyond it are registered before they're needed, rather
         // than after the current list is exhausted.
         let furthestDistance = activeSet.compactMap { code -> CLLocationDistance? in
-            guard let lat = code.latitude, let lon = code.longitude else { return nil }
+            guard let lat = code.decryptedLatitude, let lon = code.decryptedLongitude else { return nil }
             let codeLoc = CLLocation(latitude: lat, longitude: lon)
             let centreDistance = location.distance(from: codeLoc)
             let radius = code.radiusMeters ?? 100
