@@ -234,11 +234,11 @@ struct ContentView: View {
                         Text("entry.requires_newer_version")
                             .font(.caption)
                             .foregroundStyle(.orange)
-                    } else {
+                    } else if code.code != nil {
                         Image(systemName: "lock.fill")
                             .foregroundStyle(.tertiary)
                             .font(.caption)
-                        Text(maskedCode(for: code))
+                        Text("••••••")
                             .font(.caption)
                             .foregroundStyle(.tertiary)
                         if code.isSilenced == true {
@@ -432,18 +432,6 @@ struct ContentView: View {
         return CryptoManager.isFutureVersion(storedCode)
     }
 
-    private func maskedCode(for code: AccessCode) -> String {
-        guard let storedCode = code.code else { return "" }
-        switch CryptoManager.decrypt(storedCode) {
-        case .success(let plain), .legacyPlainText(let plain):
-            return String(repeating: "•", count: plain.count)
-        case .keyUnavailable:
-            return "••••"
-        case .unknownVersion:
-            return "?"
-        }
-    }
-    
     private func checkNotificationStatus() {
         UNUserNotificationCenter.current().getNotificationSettings { settings in
             DispatchQueue.main.async {

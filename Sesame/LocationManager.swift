@@ -260,6 +260,9 @@ final class LocationManager: NSObject, CLLocationManagerDelegate {
         didUpdateLocations locations: [CLLocation]
     ) {
         currentLocation = locations.last
+        if isDynamic {
+            recalculateActiveSet()
+        }
     }
 
     func locationManager(
