@@ -624,9 +624,6 @@ struct AddEditView: View {
             existing.encryptedAddress = encryptedAddress
             existing.encryptedLatitude = encryptedLatitude
             existing.encryptedLongitude = encryptedLongitude
-            existing.address = nil
-            existing.latitude = nil
-            existing.longitude = nil
             existing.radiusMeters = radiusMeters
             existing.isSilenced = isSilenced
             existing.locationDetails = encryptedLocationDetails

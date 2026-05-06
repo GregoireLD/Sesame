@@ -51,35 +51,6 @@ struct MigrationManager {
                 }
             }
 
-            // Migrate address
-            if let addr = entry.address, !addr.isEmpty,
-               entry.encryptedAddress == nil {
-                if case .success(let encrypted) = CryptoManager.encrypt(addr) {
-                    entry.encryptedAddress = encrypted
-                    entry.address = nil
-                    didChange = true
-                }
-            }
-
-            // Migrate latitude
-            if let lat = entry.latitude,
-               entry.encryptedLatitude == nil {
-                if case .success(let encrypted) = CryptoManager.encrypt(String(lat)) {
-                    entry.encryptedLatitude = encrypted
-                    entry.latitude = nil
-                    didChange = true
-                }
-            }
-
-            // Migrate longitude
-            if let lon = entry.longitude,
-               entry.encryptedLongitude == nil {
-                if case .success(let encrypted) = CryptoManager.encrypt(String(lon)) {
-                    entry.encryptedLongitude = encrypted
-                    entry.longitude = nil
-                    didChange = true
-                }
-            }
         }
 
         if didChange {

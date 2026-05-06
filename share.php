@@ -600,40 +600,58 @@ foreach ($langs as $code => $strings) {
       .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
-  function parseFragment() {
-    const hash = window.location.hash.slice(1);
-    if (!hash) return null;
-
-    let paramString = hash;
-    
-    // Try Base64URL decode
+  function base64URLDecode(str) {
     try {
-        const base64 = hash
-            .replace(/-/g, '+')
-            .replace(/_/g, '/')
-            + '=='.slice(0, (4 - hash.length % 4) % 4);
-        
-        const decoded = atob(base64);
-        
-        // Check if decoded looks like our query format
-        // Should start with "v=1&" or contain "&label="
-        if (decoded.startsWith('v=') || decoded.includes('&label=') || decoded.includes('label=')) {
-            paramString = decoded;
-        }
-    } catch (e) {
-        // Decode failed, use raw hash
+      let b64 = str.replace(/-/g, '+').replace(/_/g, '/');
+      const pad = b64.length % 4;
+      if (pad) b64 += '='.repeat(4 - pad);
+      return decodeURIComponent(escape(atob(b64)));
+    } catch { return null; }
+  }
+
+  const _crc32Table = (() => {
+    const t = new Uint32Array(256);
+    for (let i = 0; i < 256; i++) {
+      let c = i;
+      for (let j = 0; j < 8; j++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+      t[i] = c;
+    }
+    return t;
+  })();
+
+  function computeCRC32(str) {
+    let crc = 0xFFFFFFFF;
+    for (let i = 0; i < str.length; i++) {
+      crc = _crc32Table[(crc ^ str.charCodeAt(i)) & 0xFF] ^ (crc >>> 8);
+    }
+    return ((crc ^ 0xFFFFFFFF) >>> 0).toString(16).padStart(8, '0');
+  }
+
+  function parseFragment() {
+    const raw = window.location.hash.slice(1);
+    if (!raw) return null;
+
+    // Try base64url decode first; fall back to plain
+    const decoded = base64URLDecode(raw);
+    let str = (decoded && decoded.includes('=')) ? decoded : raw;
+
+    // Verify CRC32 if present, then strip it
+    const crcMatch = str.match(/&crc32=([0-9a-f]{8})$/i);
+    if (crcMatch) {
+      const payload = str.slice(0, str.length - crcMatch[0].length);
+      if (computeCRC32(payload) !== crcMatch[1].toLowerCase()) return null;
+      str = payload;
     }
 
-    // Parse parameters
     const params = {};
-    paramString.split('&').forEach(pair => {
-        const eqIndex = pair.indexOf('=');
-        if (eqIndex === -1) return;
-        const key = decodeURIComponent(pair.slice(0, eqIndex));
-        const value = decodeURIComponent(pair.slice(eqIndex + 1));
-        if (key) params[key] = value;
+    str.split('&').forEach(pair => {
+      const eqIndex = pair.indexOf('=');
+      if (eqIndex === -1) return;
+      const key = decodeURIComponent(pair.slice(0, eqIndex));
+      const value = decodeURIComponent(pair.slice(eqIndex + 1));
+      if (key) params[key] = value;
     });
-    
+
     return Object.keys(params).length ? params : null;
   }
 

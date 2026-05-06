@@ -13,11 +13,6 @@ final class AccessCode {
     var id: UUID?
     var label: String?
     var code: String?
-    // Legacy plaintext fields — kept for migration only, nil after MigrationManager runs
-    var address: String?
-    var latitude: Double?
-    var longitude: Double?
-    // Encrypted location fields (replaces the three above)
     var encryptedAddress: String?
     var encryptedLatitude: String?
     var encryptedLongitude: String?
@@ -49,10 +44,6 @@ final class AccessCode {
         self.locationDetails = locationDetails
         self.comment = comment
         self.schemaVersion = 3
-        // Legacy fields always nil for new entries
-        self.address = nil
-        self.latitude = nil
-        self.longitude = nil
     }
 
     // MARK: - Decrypted accessors

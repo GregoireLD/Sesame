@@ -117,11 +117,12 @@ struct ImportExport {
         var fragmentComponents = URLComponents()
         fragmentComponents.queryItems = items
         guard let queryString = fragmentComponents.percentEncodedQuery else { return nil }
-        
-        // Apply encoding based on usePlainFragment setting
+
+        // Append CRC32, then encode
+        let queryStringWithCRC = queryString + "&crc32=\(computeCRC32(queryString))"
         let encodedParams = usePlainFragment
-            ? queryString
-            : base64URLEncode(queryString)
+            ? queryStringWithCRC
+            : base64URLEncode(queryStringWithCRC)
         
         // Apply parameters based on scheme
         if useLegacyScheme {
@@ -179,12 +180,25 @@ struct ImportExport {
             paramString = nil
         }
 
-        guard let paramString,
-              !paramString.isEmpty else { return nil }
+        guard let paramString, !paramString.isEmpty else { return nil }
+
+        // Verify CRC32 if present, strip it before parsing
+        let payloadString: String
+        if let crcRange = paramString.range(of: "&crc32=", options: .backwards) {
+            let candidate = String(paramString[crcRange.upperBound...])
+            let payload   = String(paramString[..<crcRange.lowerBound])
+            guard candidate.count == 8,
+                  candidate.allSatisfy({ $0.isHexDigit }),
+                  computeCRC32(payload) == candidate
+            else { return nil }
+            payloadString = payload
+        } else {
+            payloadString = paramString
+        }
 
         // Parse the parameter string manually
         var paramDict: [String: String] = [:]
-        paramString.split(separator: "&").forEach { pair in
+        payloadString.split(separator: "&").forEach { pair in
             let parts = pair.split(separator: "=", maxSplits: 1)
             if parts.count == 2,
                let key = parts[0].removingPercentEncoding,
@@ -215,7 +229,19 @@ struct ImportExport {
     }
     
     // MARK: - Tools
-    
+
+    private static let crc32Table: [UInt32] = (0..<256).map { i -> UInt32 in
+        (0..<8).reduce(UInt32(i)) { c, _ in (c & 1) != 0 ? (0xEDB88320 ^ (c >> 1)) : (c >> 1) }
+    }
+
+    private static func computeCRC32(_ string: String) -> String {
+        var crc: UInt32 = 0xFFFFFFFF
+        for byte in Data(string.utf8) {
+            crc = crc32Table[Int((crc ^ UInt32(byte)) & 0xFF)] ^ (crc >> 8)
+        }
+        return String(format: "%08x", crc ^ 0xFFFFFFFF)
+    }
+
     private static func base64URLEncode(_ string: String) -> String {
         Data(string.utf8)
             .base64EncodedString()
