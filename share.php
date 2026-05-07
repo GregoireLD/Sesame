@@ -636,10 +636,12 @@ foreach ($langs as $code => $strings) {
     let str = (decoded && decoded.includes('=')) ? decoded : raw;
 
     // Verify CRC32 if present, then strip it
-    const crcMatch = str.match(/&crc32=([0-9a-f]{8})$/i);
-    if (crcMatch) {
-      const payload = str.slice(0, str.length - crcMatch[0].length);
-      if (computeCRC32(payload) !== crcMatch[1].toLowerCase()) return null;
+    const crcIdx = str.lastIndexOf('&crc32=');
+    if (crcIdx !== -1) {
+      const candidate = str.slice(crcIdx + 7);
+      const payload   = str.slice(0, crcIdx);
+      if (!/^[0-9a-f]{8}$/i.test(candidate)) return null;
+      if (computeCRC32(payload) !== candidate.toLowerCase()) return null;
       str = payload;
     }
 
