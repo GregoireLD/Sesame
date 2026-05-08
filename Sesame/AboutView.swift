@@ -201,7 +201,7 @@ struct AboutView: View {
                             Text("Simulate broken key")
                         }
                     } icon: {
-                        Image(systemName: "tree.fill")
+                        Image("custom.warning.nuke.fill")
                             .foregroundStyle(.red)
                     }
                 }
