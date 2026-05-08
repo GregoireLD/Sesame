@@ -25,7 +25,9 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
     func requestAuthorization() {
         center.requestAuthorization(options: [.alert, .sound]) { granted, error in
             if let error {
+                #if DEBUG
                 print("Notification authorization error: \(error.localizedDescription)")
+                #endif
             }
         }
     }
@@ -75,11 +77,7 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
 
             content.body = bodyLines.joined(separator: "\n")
             content.sound = .default
-            content.userInfo = [
-                "code": code,
-                "label": label,
-                "entryID": identifier
-            ]
+            content.userInfo = ["entryID": identifier]
             content.categoryIdentifier = "ACCESS_CODE"
 
             let request = UNNotificationRequest(

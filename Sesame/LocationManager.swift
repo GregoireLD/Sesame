@@ -310,7 +310,9 @@ final class LocationManager: NSObject, CLLocationManagerDelegate {
         _ manager: CLLocationManager,
         didFailWithError error: Error
     ) {
+        #if DEBUG
         print("LocationManager error: \(error.localizedDescription)")
+        #endif
     }
 
     func locationManager(
@@ -318,6 +320,8 @@ final class LocationManager: NSObject, CLLocationManagerDelegate {
         monitoringDidFailFor region: CLRegion?,
         withError error: Error
     ) {
+        #if DEBUG
         print("Monitoring failed for region \(region?.identifier ?? "unknown"): \(error.localizedDescription)")
+        #endif
     }
 }

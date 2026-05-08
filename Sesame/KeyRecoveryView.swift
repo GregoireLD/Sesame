@@ -45,7 +45,12 @@ struct KeyRecoveryView: View {
                     Button(role: .destructive) {
                         showingResetConfirmation = true
                     } label: {
-                        Label("key.recovery.reset", systemImage: "trash.fill")
+                        Label {
+                            Text("key.recovery.reset")
+                        } icon: {
+                            Image("custom.warning.nuke.fill")
+                                .foregroundStyle(.red)
+                        }
                     }
                 } footer: {
                     Text("key.recovery.reset_footer")
