@@ -172,6 +172,12 @@ struct ContentView: View {
         }
         .toggleStyle(.button)
         .tint(.accentColor)
+        .background {
+            if sortOrder == .alphabetical {
+                RoundedRectangle(cornerRadius: 50, style: .continuous)
+                    .fill(Color.gray.opacity(0.2))
+            }
+        }
     }
 
     private var sortButtonIcon: some View {

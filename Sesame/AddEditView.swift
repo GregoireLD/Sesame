@@ -454,6 +454,17 @@ struct AddEditView: View {
         }
     }
 
+    private func resolvedAddressString(from mapItem: MKMapItem) -> String? {
+        if let single = mapItem.addressRepresentations?.fullAddress(includingRegion: true, singleLine: true),
+           !single.isEmpty {
+            return single
+        }
+        if let multi = mapItem.address?.fullAddress, !multi.isEmpty {
+            return multi.replacingOccurrences(of: "\n", with: ", ")
+        }
+        return nil
+    }
+
     private func geocodeAddress() {
         geocodingSuccess = false
         isGeocoding = true
@@ -469,14 +480,21 @@ struct AddEditView: View {
             }
             do {
                 let mapItems = try await request.mapItems
-                guard let coordinate = mapItems.first?.location.coordinate else {
+                guard let mapItem = mapItems.first else {
                     isGeocoding = false
                     geocodingError = String(localized: "address.error.not_found")
                     return
                 }
+                let coordinate = mapItem.location.coordinate
+                let resolved = resolvedAddressString(from: mapItem)
+                isPopulating = true
+                if let resolved, !resolved.isEmpty {
+                    address = resolved
+                }
                 latitude = coordinate.latitude
                 longitude = coordinate.longitude
                 geocodingSuccess = true
+                isPopulating = false
             } catch {
                 geocodingError = String(
                     localized: "address.error.generic \(error.localizedDescription)"
@@ -504,7 +522,7 @@ struct AddEditView: View {
                 }
                 do {
                     let mapItems = try await request.mapItems
-                    guard let coordinate = mapItems.first?.location.coordinate else {
+                    guard let mapItem = mapItems.first else {
                         await MainActor.run {
                             isGeocoding = false
                             geocodingError = String(localized: "address.error.not_found")
@@ -512,10 +530,17 @@ struct AddEditView: View {
                         }
                         return
                     }
+                    let coordinate = mapItem.location.coordinate
+                    let resolved = resolvedAddressString(from: mapItem)
                     await MainActor.run {
+                        isPopulating = true
+                        if let resolved, !resolved.isEmpty {
+                            address = resolved
+                        }
                         latitude = coordinate.latitude
                         longitude = coordinate.longitude
                         geocodingSuccess = true
+                        isPopulating = false
                         isGeocoding = false
                         performSave()
                     }
