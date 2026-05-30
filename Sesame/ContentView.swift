@@ -8,7 +8,6 @@
 import SwiftUI
 import SwiftData
 import CoreLocation
-import CoreData
 import MapKit
 
 enum SortOrder: String {
@@ -23,7 +22,6 @@ struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var accessCodes: [AccessCode]
 
-    @State private var lastRefresh: Date = .now
     @State private var showingAddSheet = false
     @State private var selectedCode: AccessCode? = nil
     @Binding var selectedEntryID: String?
@@ -130,11 +128,6 @@ struct ContentView: View {
                 authorizationBanner
             }
             .onReceive(NotificationCenter.default.publisher(
-                for: NSPersistentCloudKitContainer.eventChangedNotification
-            )) { _ in
-                lastRefresh = .now
-            }
-            .onReceive(NotificationCenter.default.publisher(
                 for: UIApplication.didBecomeActiveNotification
             )) { _ in
                 checkNotificationStatus()
@@ -218,9 +211,6 @@ struct ContentView: View {
                 .onDelete(perform: delete)
             }
         }
-        .refreshable {
-            try? await Task.sleep(nanoseconds: 1_000_000_000)
-        }
     }
 
     private func row(for code: AccessCode) -> some View {
@@ -242,21 +232,36 @@ struct ContentView: View {
                         Text("entry.requires_newer_version")
                             .font(.caption)
                             .foregroundStyle(.orange)
-                    } else if code.code != nil {
-                        Image(systemName: "lock.fill")
-                            .foregroundStyle(.tertiary)
-                            .font(.caption)
-                        Text("••••••")
-                            .font(.caption)
-                            .foregroundStyle(.tertiary)
+                    } else {
+                        if code.code != nil {
+                            Image(systemName: "key.fill")
+                                .foregroundStyle(.tertiary)
+                                .font(.caption)
+                        }
+                        if code.locationDetails != nil {
+                            Image(systemName: "info.circle.fill")
+                                .foregroundStyle(.tertiary)
+                                .font(.caption)
+                        }
+                        if code.comment != nil {
+                            Image(systemName: "text.bubble.fill")
+                                .foregroundStyle(.tertiary)
+                                .font(.caption)
+                        }
+                        if code.encryptedAddress != nil {
+                            if code.encryptedLatitude != nil && code.encryptedLongitude != nil {
+                                Image(systemName: "location.fill")
+                                    .foregroundStyle(.tertiary)
+                                    .font(.caption)
+                            } else {
+                                Image(systemName: "location.slash.fill")
+                                    .foregroundStyle(.orange)
+                                    .font(.caption)
+                            }
+                        }
                         if code.isSilenced == true {
-                                    Image(systemName: "bell.slash.fill")
-                                        .foregroundStyle(.tertiary)
-                                        .font(.caption)
-                                }
-                        if code.encryptedLatitude == nil && code.encryptedLongitude == nil {
-                            Image(systemName: "location.slash.fill")
-                                .foregroundStyle(.orange)
+                            Image(systemName: "bell.slash.fill")
+                                .foregroundStyle(.tertiary)
                                 .font(.caption)
                         }
                     }
@@ -286,8 +291,8 @@ struct ContentView: View {
                 } label: {
                     Label(
                         code.isSilenced == true
-                            ? String(localized: "entry.unmute")
-                            : String(localized: "entry.mute"),
+                            ? String(localized: "entry.enable")
+                            : String(localized: "entry.disable"),
                         systemImage: code.isSilenced == true
                             ? "bell.fill"
                             : "bell.slash.fill"
@@ -296,13 +301,22 @@ struct ContentView: View {
                 .tint(code.isSilenced == true ? .orange : .secondary)
             }
         }
-        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+        .swipeActions(edge: .trailing, allowsFullSwipe: code.encryptedLatitude != nil && code.encryptedLongitude != nil) {
             Button {
                 if code.encryptedLatitude != nil && code.encryptedLongitude != nil {
                     openInMaps(accessCode: code)
                 }
             } label: {
-                Label("action.maps", systemImage: "map.fill")
+                let hasCoords = code.encryptedLatitude != nil && code.encryptedLongitude != nil
+                Label {
+                    Text("action.maps")
+                } icon: {
+                    if hasCoords {
+                        Image(systemName: "map.fill")
+                    } else {
+                        Image("custom.map.slash.fill")
+                    }
+                }
             }
             .tint(code.encryptedLatitude != nil && code.encryptedLongitude != nil ? .blue : .gray)
         }

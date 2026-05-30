@@ -106,7 +106,11 @@ struct CryptoManager {
             guard let combined = sealedBox.combined else {
                 return .keyUnavailable
             }
-            // Store nonce and ciphertext separately for forward compatibility
+            // Format: v1:<nonce_b64>:<combined_b64>
+            // Note: the nonce is already embedded in 'combined' (AES.GCM.SealedBox.combined =
+            // nonce + ciphertext + tag). The standalone nonce stored as parts[1] is therefore
+            // redundant and is never read back during decryption — only parts[2] (combined) is
+            // used. This is baked into the on-disk/CloudKit format and must not be changed.
             let nonceBase64 = Data(sealedBox.nonce).base64EncodedString()
             let ciphertextBase64 = combined.base64EncodedString()
             let versioned = "\(currentVersion)\(separator)\(nonceBase64)\(separator)\(ciphertextBase64)"

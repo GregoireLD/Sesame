@@ -42,29 +42,26 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
             let descriptor = FetchDescriptor<AccessCode>()
             guard let accessCodes = try? context.fetch(descriptor),
                   let match = accessCodes.first(where: { $0.id?.uuidString == identifier }),
-                  let label = match.label,
-                  let code = match.code
+                  let label = match.label
             else { return }
-            
+
             // Respect the per-entry silence setting
             if match.isSilenced == true { return }
 
-            let content = UNMutableNotificationContent()
-            content.title = label
+            var bodyLines: [String] = []
 
-            let displayCode: String
-            switch CryptoManager.decrypt(code) {
-            case .success(let plain), .legacyPlainText(let plain):
-                displayCode = plain
-            case .keyUnavailable:
-                displayCode = String(localized: "notification.code.key_unavailable")
-            case .unknownVersion:
-                displayCode = String(localized: "notification.code.unknown_version")
+            if let code = match.code {
+                let displayCode: String
+                switch CryptoManager.decrypt(code) {
+                case .success(let plain), .legacyPlainText(let plain):
+                    displayCode = plain
+                case .keyUnavailable:
+                    displayCode = String(localized: "notification.code.key_unavailable")
+                case .unknownVersion:
+                    displayCode = String(localized: "notification.code.unknown_version")
+                }
+                bodyLines.append(String(localized: "notification.code.body \(displayCode)"))
             }
-
-            var bodyLines: [String] = [
-                String(localized: "notification.code.body \(displayCode)")
-            ]
 
             if let locationDetails = match.locationDetails, !locationDetails.isEmpty {
                 switch CryptoManager.decrypt(locationDetails) {
@@ -75,6 +72,11 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
                 }
             }
 
+            // Nothing to show — skip notification entirely
+            guard !bodyLines.isEmpty else { return }
+
+            let content = UNMutableNotificationContent()
+            content.title = label
             content.body = bodyLines.joined(separator: "\n")
             content.sound = .default
             content.userInfo = ["entryID": identifier]

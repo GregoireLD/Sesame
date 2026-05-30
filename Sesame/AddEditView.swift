@@ -41,6 +41,8 @@ struct AddEditView: View {
     @State private var showingClipboardOverwriteWarning: Bool = false
     @State private var pendingClipboardImport: ParsedImport? = nil
 
+    @State private var addressCompleter = AddressCompleter()
+
     // Focus state for auto-resolve on focus loss
     @FocusState private var addressFocused: Bool
 
@@ -92,7 +94,13 @@ struct AddEditView: View {
                         .disabled(!canSave)
                 }
             }
-            .onAppear { populateIfEditing() }
+            .onAppear {
+                populateIfEditing()
+                addressCompleter.setRegion(around: locationManager.currentLocation)
+            }
+            .onChange(of: locationManager.currentLocation) { _, newValue in
+                addressCompleter.setRegion(around: newValue)
+            }
             // Track unsaved changes on any field edit
             .onChange(of: address) { oldValue, newValue in
                 // Only invalidate geocoding if the address actually changed
@@ -102,11 +110,15 @@ struct AddEditView: View {
                 geocodingError = nil
                 latitude = nil
                 longitude = nil
+                addressCompleter.update(query: newValue)
             }
             // Auto-resolve address on focus loss
             .onChange(of: addressFocused) { _, focused in
-                if !focused && !address.isEmpty && !geocodingSuccess && !isGeocoding {
-                    geocodeAddress()
+                if !focused {
+                    addressCompleter.clear()
+                    if !address.isEmpty && !geocodingSuccess && !isGeocoding {
+                        geocodeAddress()
+                    }
                 }
             }
             // Key unavailable error
@@ -177,6 +189,9 @@ struct AddEditView: View {
     private var labelSection: some View {
         Section {
             TextField(String(localized: "label.placeholder"), text: $label)
+                // .oneTimeCode suppresses the iOS autofill/suggestions overlay on this field
+                // without affecting autocorrection; semantically less accurate than .name
+                // but behaves better for this use case
                 .textContentType(.oneTimeCode)
         } header: {
             Text("label.header")
@@ -220,6 +235,28 @@ struct AddEditView: View {
             TextField(String(localized: "address.placeholder"), text: $address)
                 .autocorrectionDisabled()
                 .focused($addressFocused)
+            if addressFocused && !addressCompleter.results.isEmpty && !isGeocoding {
+                ForEach(addressCompleter.results, id: \.self) { suggestion in
+                    Button {
+                        selectSuggestion(suggestion)
+                    } label: {
+                        HStack(spacing: 10) {
+                            Image(systemName: "mappin.and.ellipse")
+                                .foregroundStyle(.secondary)
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(suggestion.title)
+                                    .foregroundStyle(.primary)
+                                if !suggestion.subtitle.isEmpty {
+                                    Text(suggestion.subtitle)
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+                        }
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
             Button {
                 geocodeAddress()
             } label: {
@@ -454,6 +491,46 @@ struct AddEditView: View {
         }
     }
 
+    private func selectSuggestion(_ suggestion: MKLocalSearchCompletion) {
+        addressCompleter.clear()
+        addressFocused = false
+        isGeocoding = true
+        geocodingError = nil
+        geocodingSuccess = false
+        latitude = nil
+        longitude = nil
+
+        Task {
+            let request = MKLocalSearch.Request(completion: suggestion)
+            do {
+                let response = try await MKLocalSearch(request: request).start()
+                guard let mapItem = response.mapItems.first else {
+                    isGeocoding = false
+                    geocodingError = String(localized: "address.error.not_found")
+                    return
+                }
+                let coordinate = mapItem.location.coordinate
+                let resolved = resolvedAddressString(from: mapItem)
+                    ?? [suggestion.title, suggestion.subtitle]
+                        .filter { !$0.isEmpty }
+                        .joined(separator: ", ")
+                isPopulating = true
+                if !resolved.isEmpty {
+                    address = resolved
+                }
+                latitude = coordinate.latitude
+                longitude = coordinate.longitude
+                geocodingSuccess = true
+                isPopulating = false
+            } catch {
+                geocodingError = String(
+                    localized: "address.error.generic \(error.localizedDescription)"
+                )
+            }
+            isGeocoding = false
+        }
+    }
+
     private func resolvedAddressString(from mapItem: MKMapItem) -> String? {
         if let single = mapItem.addressRepresentations?.fullAddress(includingRegion: true, singleLine: true),
            !single.isEmpty {
@@ -680,5 +757,57 @@ struct AddEditView: View {
         modelContext.delete(existing)
         onDelete?()
         dismiss()
+    }
+}
+
+@MainActor
+@Observable
+final class AddressCompleter: NSObject, MKLocalSearchCompleterDelegate {
+    var results: [MKLocalSearchCompletion] = []
+
+    @ObservationIgnored
+    private lazy var completer: MKLocalSearchCompleter = {
+        let c = MKLocalSearchCompleter()
+        c.resultTypes = .address
+        c.delegate = self
+        return c
+    }()
+
+    func setRegion(around location: CLLocation?, radius: CLLocationDistance = 50_000) {
+        guard let location else { return }
+        completer.region = MKCoordinateRegion(
+            center: location.coordinate,
+            latitudinalMeters: radius * 2,
+            longitudinalMeters: radius * 2
+        )
+        completer.regionPriority = .default
+    }
+
+    func update(query: String) {
+        let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else {
+            completer.cancel()
+            results = []
+            return
+        }
+        completer.queryFragment = trimmed
+    }
+
+    func clear() {
+        completer.cancel()
+        results = []
+    }
+
+    nonisolated func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {
+        let snapshot = completer.results
+        Task { @MainActor in
+            self.results = snapshot
+        }
+    }
+
+    nonisolated func completer(_ completer: MKLocalSearchCompleter, didFailWithError error: any Error) {
+        Task { @MainActor in
+            self.results = []
+        }
     }
 }

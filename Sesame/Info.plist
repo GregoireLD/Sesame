@@ -20,6 +20,11 @@
 	<key>NSUserNotificationsUsageDescription</key>
 	<string>Sesame sends you a notification displaying the access code when you arrive at a saved location.
 </string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>location</string>
+		<string>remote-notification</string>
+	</array>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
