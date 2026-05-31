@@ -220,10 +220,10 @@ struct ContentView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(code.label ?? "")
                     .font(.headline)
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(Color.listPrimary)
                 Text(code.decryptedAddress ?? "")
                     .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Color.listSecondary)
                 HStack {
                     if isFutureVersion(code) {
                         Image(systemName: "lock.trianglebadge.exclamationmark.fill")
@@ -235,23 +235,23 @@ struct ContentView: View {
                     } else {
                         if code.code != nil {
                             Image(systemName: "key.fill")
-                                .foregroundStyle(.tertiary)
+                                .foregroundStyle(Color.listTertiary)
                                 .font(.caption)
                         }
                         if code.locationDetails != nil {
                             Image(systemName: "info.circle.fill")
-                                .foregroundStyle(.tertiary)
+                                .foregroundStyle(Color.listTertiary)
                                 .font(.caption)
                         }
                         if code.comment != nil {
                             Image(systemName: "text.bubble.fill")
-                                .foregroundStyle(.tertiary)
+                                .foregroundStyle(Color.listTertiary)
                                 .font(.caption)
                         }
                         if code.encryptedAddress != nil {
                             if code.encryptedLatitude != nil && code.encryptedLongitude != nil {
                                 Image(systemName: "location.fill")
-                                    .foregroundStyle(.tertiary)
+                                    .foregroundStyle(Color.listTertiary)
                                     .font(.caption)
                             } else {
                                 Image(systemName: "location.slash.fill")
@@ -261,7 +261,7 @@ struct ContentView: View {
                         }
                         if code.isSilenced == true {
                             Image(systemName: "bell.slash.fill")
-                                .foregroundStyle(.tertiary)
+                                .foregroundStyle(Color.listTertiary)
                                 .font(.caption)
                         }
                     }
@@ -276,7 +276,7 @@ struct ContentView: View {
                         ))
                         Text(distanceString(distance))
                             .font(.caption)
-                            .foregroundStyle(.tertiary)
+                            .foregroundStyle(Color.listTertiary)
                     }
                 }
             }

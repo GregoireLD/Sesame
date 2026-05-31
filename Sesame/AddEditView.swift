@@ -242,14 +242,14 @@ struct AddEditView: View {
                     } label: {
                         HStack(spacing: 10) {
                             Image(systemName: "mappin.and.ellipse")
-                                .foregroundStyle(.secondary)
+                                .foregroundStyle(Color.listTertiary)
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(suggestion.title)
-                                    .foregroundStyle(.primary)
+                                    .foregroundStyle(Color.listPrimary)
                                 if !suggestion.subtitle.isEmpty {
                                     Text(suggestion.subtitle)
                                         .font(.caption)
-                                        .foregroundStyle(.secondary)
+                                        .foregroundStyle(Color.listSecondary)
                                 }
                             }
                         }

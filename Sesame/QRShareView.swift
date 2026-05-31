@@ -129,7 +129,7 @@ struct QRShareView: View {
                     Text("qr.share")
                 } icon: {
                     Image(systemName: "square.and.arrow.up")
-                        .foregroundStyle(.blue)
+                        .foregroundStyle(Color.listPrimary)
                 }
             }
             .disabled(shareURL == nil)
@@ -148,7 +148,7 @@ struct QRShareView: View {
                     Text("qr.option.radius")
                 } icon: {
                     Image(systemName: "location.circle.fill")
-                        .foregroundStyle(.blue)
+                        .foregroundStyle(Color.listPrimary)
                 }
             }
             Toggle(isOn: $includeLocationDetails) {
@@ -164,7 +164,7 @@ struct QRShareView: View {
                     Text("qr.option.comment")
                 } icon: {
                     Image(systemName: "text.bubble.fill")
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(Color.listTertiary)
                 }
             }
             if showHiddenFeatures {

@@ -129,7 +129,7 @@ private struct HowItWorksPage: View {
                 VStack(alignment: .leading, spacing: 20) {
                     featureRow(
                         icon: "mappin.circle.fill",
-                        color: .blue,
+                        color: Color.listPrimary,
                         title: "onboarding.howitworks.feature1.title",
                         subtitle: "onboarding.howitworks.feature1.subtitle"
                     )

@@ -106,7 +106,7 @@ struct AboutView: View {
                     Text("about.support")
                 } icon: {
                     Image(systemName: "questionmark.circle.fill")
-                        .foregroundStyle(.blue)
+                        .foregroundStyle(Color.listPrimary)
                 }
             }
             Link(destination: tipURL) {
@@ -153,7 +153,7 @@ struct AboutView: View {
                 Label {
                     Text("about.privacy_statement")
                         .font(.footnote)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(Color.listSecondary)
                 } icon: {
                     Image(systemName: "checkmark.shield.fill")
                         .foregroundStyle(.green)
@@ -171,7 +171,7 @@ struct AboutView: View {
                 Text("about.version")
                 Spacer()
                 Text("\(appVersion) (\(buildNumber))")
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Color.listSecondary)
                     .font(.footnote)
             }
             .contentShape(Rectangle())
@@ -227,7 +227,7 @@ struct AboutView: View {
                 Spacer()
                 Text("about.credits")
                     .font(.footnote)
-                    .foregroundStyle(.tertiary)
+                    .foregroundStyle(Color.listTertiary)
                     .multilineTextAlignment(.center)
                 Spacer()
             }
