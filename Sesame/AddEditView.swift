@@ -333,7 +333,7 @@ struct AddEditView: View {
                     Button {
                         isSilenced.toggle()
                     } label: {
-                        Image(systemName: isSilenced ? "bell.slash.fill" : "bell.and.waves.left.fill")
+                        Image(systemName: isSilenced ? "bell.slash.fill" : "bell.fill")
                             .foregroundStyle(isSilenced ? Color.secondary : Color.orange)
                             .font(.title3)
                     }

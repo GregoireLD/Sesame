@@ -206,7 +206,7 @@ struct EntryDetailView: View {
                         Spacer()
                         Image(systemName: accessCode.isSilenced == true
                               ? "bell.slash.fill"
-                              : "bell.and.waves.left.fill")
+                              : "bell.fill")
                             .foregroundStyle(accessCode.isSilenced == true
                                              ? Color.secondary
                                              : Color.orange)
