@@ -4,6 +4,8 @@
 
 Sesame stores your building access codes and delivers them automatically when you arrive — no more searching through your phone at the door.
 
+For the Android port, see : [Sesame Lite (Android)](https://github.com/GregoireLD/Sesame_Lite)
+
 ## Features
 
 - **Automatic geofencing** — notified when you approach a saved location
