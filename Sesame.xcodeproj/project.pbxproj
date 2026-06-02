@@ -173,8 +173,8 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Sesame/Info.plist;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
-				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Sesame needs background location access to alert you even when the app is closed.";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Sesame needs your location to alert you when you're near a saved access code.";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Sesame uses your location in the background to detect when you arrive at a saved place and notify you with its access code — for example, showing your building code as you reach the front door, even when the app is closed.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Sesame uses your location to sort your saved entries by distance, so the place you're closest to appears at the top of your list.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
@@ -212,8 +212,8 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Sesame/Info.plist;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
-				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Sesame needs background location access to alert you even when the app is closed.";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Sesame needs your location to alert you when you're near a saved access code.";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Sesame uses your location in the background to detect when you arrive at a saved place and notify you with its access code — for example, showing your building code as you reach the front door, even when the app is closed.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Sesame uses your location to sort your saved entries by distance, so the place you're closest to appears at the top of your list.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";

@@ -11,8 +11,6 @@ struct AboutView: View {
 
     private let supportURL = URL(string: "https://sesame-app.com")!
     private let privacyURL = URL(string: "https://sesame-app.com/privacy.php")!
-    private let tipURL = URL(string: "https://ko-fi.com/duvalparis")!
-    
     @Environment(\.dismiss) private var dismiss
     
     @AppStorage("locationBannerDismissed") private var locationBannerDismissed = false
@@ -107,14 +105,6 @@ struct AboutView: View {
                 } icon: {
                     Image(systemName: "questionmark.circle.fill")
                         .foregroundStyle(Color.listPrimary)
-                }
-            }
-            Link(destination: tipURL) {
-                Label {
-                    Text("about.tip")
-                } icon: {
-                    Image(systemName: "heart.fill")
-                        .foregroundStyle(.pink)
                 }
             }
             Button {
