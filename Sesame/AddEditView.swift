@@ -535,8 +535,10 @@ struct AddEditView: View {
             do {
                 let response = try await MKLocalSearch(request: request).start()
                 guard let mapItem = response.mapItems.first else {
-                    isGeocoding = false
-                    geocodingError = String(localized: "address.error.not_found")
+                    await MainActor.run {
+                        isGeocoding = false
+                        geocodingError = String(localized: "address.error.not_found")
+                    }
                     return
                 }
                 let coordinate = mapItem.location.coordinate
@@ -544,20 +546,25 @@ struct AddEditView: View {
                     ?? [suggestion.title, suggestion.subtitle]
                         .filter { !$0.isEmpty }
                         .joined(separator: ", ")
-                isPopulating = true
-                if !resolved.isEmpty {
-                    address = resolved
+                await MainActor.run {
+                    isPopulating = true
+                    if !resolved.isEmpty {
+                        address = resolved
+                    }
+                    latitude = coordinate.latitude
+                    longitude = coordinate.longitude
+                    geocodingSuccess = true
+                    isPopulating = false
+                    isGeocoding = false
                 }
-                latitude = coordinate.latitude
-                longitude = coordinate.longitude
-                geocodingSuccess = true
-                isPopulating = false
             } catch {
-                geocodingError = String(
-                    localized: "address.error.generic \(error.localizedDescription)"
-                )
+                await MainActor.run {
+                    geocodingError = String(
+                        localized: "address.error.generic \(error.localizedDescription)"
+                    )
+                    isGeocoding = false
+                }
             }
-            isGeocoding = false
         }
     }
 
@@ -581,33 +588,42 @@ struct AddEditView: View {
 
         Task {
             guard let request = MKGeocodingRequest(addressString: address) else {
-                isGeocoding = false
-                geocodingError = String(localized: "address.error.empty")
+                await MainActor.run {
+                    isGeocoding = false
+                    geocodingError = String(localized: "address.error.empty")
+                }
                 return
             }
             do {
                 let mapItems = try await request.mapItems
                 guard let mapItem = mapItems.first else {
-                    isGeocoding = false
-                    geocodingError = String(localized: "address.error.not_found")
+                    await MainActor.run {
+                        isGeocoding = false
+                        geocodingError = String(localized: "address.error.not_found")
+                    }
                     return
                 }
                 let coordinate = mapItem.location.coordinate
                 let resolved = resolvedAddressString(from: mapItem)
-                isPopulating = true
-                if let resolved, !resolved.isEmpty {
-                    address = resolved
+                await MainActor.run {
+                    isPopulating = true
+                    if let resolved, !resolved.isEmpty {
+                        address = resolved
+                    }
+                    latitude = coordinate.latitude
+                    longitude = coordinate.longitude
+                    geocodingSuccess = true
+                    isPopulating = false
+                    isGeocoding = false
                 }
-                latitude = coordinate.latitude
-                longitude = coordinate.longitude
-                geocodingSuccess = true
-                isPopulating = false
             } catch {
-                geocodingError = String(
-                    localized: "address.error.generic \(error.localizedDescription)"
-                )
+                await MainActor.run {
+                    geocodingError = String(
+                        localized: "address.error.generic \(error.localizedDescription)"
+                    )
+                    isGeocoding = false
+                }
             }
-            isGeocoding = false
         }
     }
 
