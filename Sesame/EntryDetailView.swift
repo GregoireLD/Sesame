@@ -86,6 +86,8 @@ struct EntryDetailView: View {
                                 Label("action.copy", systemImage: "doc.on.doc")
                             }
                         }
+                } header: {
+                    Text("label.header")
                 }
 
                 // ── Code ───────────────────────────────────────
@@ -204,16 +206,10 @@ struct EntryDetailView: View {
                         Spacer()
                         Image(systemName: accessCode.isSilenced == true
                               ? "bell.slash.fill"
-                              : "bell.fill")
+                              : "bell.and.waves.left.fill")
                             .foregroundStyle(accessCode.isSilenced == true
                                              ? Color.secondary
                                              : Color.orange)
-                        Text(accessCode.isSilenced == true
-                             ? String(localized: "detail.silenced")
-                             : String(localized: "detail.active"))
-                            .foregroundStyle(accessCode.isSilenced == true
-                                             ? .secondary
-                                             : .primary)
                     }
                 } header: {
                     Text("radius.header")

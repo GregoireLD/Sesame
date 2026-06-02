@@ -40,6 +40,8 @@ struct AddEditView: View {
     @State private var showingClipboardError: Bool = false
     @State private var showingClipboardOverwriteWarning: Bool = false
     @State private var pendingClipboardImport: ParsedImport? = nil
+    @State private var showingDuplicateWarning: Bool = false
+    @State private var duplicateEntry: AccessCode? = nil
 
     @State private var addressCompleter = AddressCompleter()
 
@@ -181,6 +183,29 @@ struct AddEditView: View {
             } message: {
                 Text("clipboard.overwrite.message")
             }
+            // Duplicate entry warning
+            .alert(
+                String(localized: "duplicate.title"),
+                isPresented: $showingDuplicateWarning
+            ) {
+                Button(String(localized: "duplicate.replace"), role: .destructive) {
+                    if let dup = duplicateEntry {
+                        locationManager.stopMonitoring(accessCode: dup)
+                        modelContext.delete(dup)
+                    }
+                    duplicateEntry = nil
+                    performSave(skipDuplicateCheck: true)
+                }
+                Button(String(localized: "duplicate.save_anyway")) {
+                    duplicateEntry = nil
+                    performSave(skipDuplicateCheck: true)
+                }
+                Button(String(localized: "action.cancel"), role: .cancel) {
+                    duplicateEntry = nil
+                }
+            } message: {
+                Text("duplicate.message")
+            }
         }
     }
 
@@ -308,7 +333,7 @@ struct AddEditView: View {
                     Button {
                         isSilenced.toggle()
                     } label: {
-                        Image(systemName: isSilenced ? "bell.slash.fill" : "bell.fill")
+                        Image(systemName: isSilenced ? "bell.slash.fill" : "bell.and.waves.left.fill")
                             .foregroundStyle(isSilenced ? Color.secondary : Color.orange)
                             .font(.title3)
                     }
@@ -376,8 +401,13 @@ struct AddEditView: View {
     // MARK: - Logic
 
     private func importFromClipboard() {
-        guard let string = UIPasteboard.general.string,
-              let url = URL(string: string),
+        guard var string = UIPasteboard.general.string else {
+            showingClipboardError = true
+            return
+        }
+        string = string.trimmingCharacters(in: .whitespacesAndNewlines)
+        while string.hasSuffix(".") { string = String(string.dropLast()) }
+        guard let url = URL(string: string),
               let parsed = ImportExport.parse(url: url) else {
             showingClipboardError = true
             return
@@ -645,7 +675,17 @@ struct AddEditView: View {
         performSave()
     }
 
-    private func performSave() {
+    private func performSave(skipDuplicateCheck: Bool = false) {
+        // Check for duplicate (label + address match) before creating a new entry
+        if existingCode == nil && !skipDuplicateCheck {
+            let all = (try? modelContext.fetch(FetchDescriptor<AccessCode>())) ?? []
+            if let dup = all.first(where: { $0.label == label && $0.decryptedAddress == address }) {
+                duplicateEntry = dup
+                showingDuplicateWarning = true
+                return
+            }
+        }
+
         // Encrypt code if present
         let encryptedCode: String?
         if !code.isEmpty {
