@@ -17,9 +17,12 @@
 			</array>
 		</dict>
 	</array>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>NSLocationWhenInUseUsageDescription</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>NSLocationAlwaysAndWhenInUseUsageDescription</string>
 	<key>NSUserNotificationsUsageDescription</key>
-	<string>Sesame sends you a notification displaying the access code when you arrive at a saved location.
-</string>
+	<string>NSUserNotificationsUsageDescription</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

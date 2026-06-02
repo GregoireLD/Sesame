@@ -1,0 +1,163 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "CFBundleName" : {
+      "comment" : "Bundle name",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Sesame"
+          }
+        }
+      }
+    },
+    "NSLocationAlwaysAndWhenInUseUsageDescription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "يستخدم Sesame موقعك في الخلفية لاكتشاف وصولك إلى مكان محفوظ وإشعارك برمز الدخول الخاص به. على سبيل المثال، يعرض رمز المبنى عند وصولك إلى الباب الأمامي، حتى عندما يكون التطبيق مغلقًا."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sesame verwendet deinen Standort im Hintergrund, um zu erkennen, wann du an einem gespeicherten Ort ankommst, und dich mit dem zugehörigen Zugangscode zu benachrichtigen – zum Beispiel, indem dir der Code deines Gebäudes angezeigt wird, sobald du an der Eingangstür ankommst, auch wenn die App geschlossen ist."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sesame uses your location in the background to detect when you arrive at a saved place and notify you with its access code — for example, showing your building code as you reach the front door, even when the app is closed."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sesame usa tu ubicación en segundo plano para detectar cuándo llegas a un lugar guardado y avisarte con su código de acceso; por ejemplo, mostrando el código de tu edificio al llegar a la puerta, incluso con la app cerrada."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sesame utilise votre position en arrière-plan pour détecter votre arrivée à un lieu enregistré et vous notifier avec son code d'accès — par exemple, en affichant le code de votre immeuble lorsque vous arrivez devant la porte, même lorsque l'application est fermée."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sesame usa la tua posizione in background per rilevare quando arrivi in un luogo salvato e avvisarti con il relativo codice di accesso, ad esempio mostrando il codice del tuo edificio quando raggiungi la porta d'ingresso, anche quando l'app è chiusa."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sesame は、保存した場所に到着したことを検知して、そのアクセスコードを通知するために位置情報をバックグラウンドで使用します。例えば、建物の入口に着いたときに、アプリが閉じていても入館コードを表示します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sesame는 저장된 장소에 도착한 것을 감지하여 해당 출입 코드를 알려주기 위해 위치 정보를 백그라운드에서 사용합니다. 예를 들어, 앱이 닫혀 있어도 건물 입구에 도착하면 출입 코드를 표시합니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sesame 在后台使用您的位置信息，以检测您何时到达已保存的地点，并通知您相应的门禁密码。例如，当您到达大楼门口时，即使应用已关闭，也会显示门禁密码。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sesame 在背景使用您的位置資訊，以偵測您何時抵達已儲存的地點，並通知您相應的門禁密碼。例如，當您抵達大樓門口時，即使 App 已關閉，也會顯示門禁密碼。"
+          }
+        }
+      }
+    },
+    "NSUserNotificationsUsageDescription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "يُرسل لك Sesame إشعارًا يعرض رمز الدخول عند وصولك إلى موقع محفوظ." } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Sesame sendet dir eine Benachrichtigung mit dem Zugangscode, wenn du an einem gespeicherten Ort ankommst." } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Sesame sends you a notification displaying the access code when you arrive at a saved location." } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Sesame te envía una notificación con el código de acceso cuando llegas a un lugar guardado." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Sesame vous envoie une notification affichant le code d'accès lorsque vous arrivez à un lieu enregistré." } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Sesame ti invia una notifica con il codice di accesso quando arrivi in un luogo salvato." } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "Sesame は、保存した場所に到着するとアクセスコードを表示する通知を送ります。" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "Sesame는 저장된 위치에 도착하면 출입 코드를 표시하는 알림을 보냅니다." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "当您到达已保存的位置时，Sesame 会向您发送显示门禁密码的通知。" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "當您抵達已儲存的位置時，Sesame 會向您傳送顯示門禁密碼的通知。" } }
+      }
+    },
+    "NSLocationWhenInUseUsageDescription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "يستخدم Sesame موقعك لترتيب الإدخالات المحفوظة حسب المسافة، بحيث يظهر المكان الأقرب إليك في أعلى القائمة."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sesame verwendet deinen Standort, um deine gespeicherten Einträge nach Entfernung zu sortieren, sodass der nächstgelegene Ort oben in deiner Liste erscheint."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sesame uses your location to sort your saved entries by distance, so the place you're closest to appears at the top of your list."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sesame usa tu ubicación para ordenar tus entradas guardadas por distancia, de modo que el lugar más cercano aparezca al principio de tu lista."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sesame utilise votre position pour trier vos entrées enregistrées par distance, afin que le lieu le plus proche apparaisse en haut de votre liste."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sesame usa la tua posizione per ordinare le voci salvate in base alla distanza, così il luogo più vicino appare in cima alla tua lista."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sesame は、保存した場所を距離順に並べ替えるために位置情報を使用します。最も近い場所がリストの一番上に表示されます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sesame는 저장된 항목을 거리순으로 정렬하기 위해 위치 정보를 사용합니다. 가장 가까운 장소가 목록 맨 위에 표시됩니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sesame 使用您的位置信息，按距离对已保存的条目进行排序，让距离最近的地点显示在列表顶部。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sesame 使用您的位置資訊，依距離排序已儲存的項目，讓距離最近的地點顯示在清單頂端。"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.1"
+}

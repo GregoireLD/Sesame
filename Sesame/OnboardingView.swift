@@ -228,8 +228,9 @@ private struct PermissionsPage: View {
                 } label: {
                     Text("onboarding.permissions.skip")
                         .font(.footnote)
-                        .foregroundStyle(.tertiary)
+                        .foregroundStyle(.secondary)
                 }
+                .buttonStyle(.plain)
                 .padding(.bottom, 8)
             }
             .padding(.bottom, 80)
