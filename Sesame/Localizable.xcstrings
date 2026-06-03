@@ -1182,7 +1182,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Supprimer l'entrée"
+            "value" : "Supprimer la fiche"
           }
         },
         "it" : {
@@ -1438,7 +1438,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nouvelle entrée"
+            "value" : "Nouvelle fiche"
           }
         },
         "it" : {
@@ -2078,7 +2078,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cette entrée n'a pas de localisation résolue. Le géofencing ne fonctionnera pas jusqu'à ce que vous la modifiiez et résolviez une adresse valide."
+            "value" : "Cette fiche n'a pas de localisation résolue. Le géofencing ne fonctionnera pas jusqu'à ce que vous la modifiiez et résolviez une adresse valide."
           }
         },
         "it" : {
@@ -3734,7 +3734,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Modifier l'entrée"
+            "value" : "Modifier la fiche"
           }
         },
         "it" : {
@@ -4310,7 +4310,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cette entrée a été partagée depuis une version plus récente de Sesame. Mettez l'application à jour pour l'importer."
+            "value" : "Cette fiche a été partagée depuis une version plus récente de Sesame. Mettez l'application à jour pour l'importer."
           }
         },
         "it" : {
@@ -4566,7 +4566,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Importer une entrée"
+            "value" : "Importer une fiche"
           }
         },
         "it" : {
@@ -4950,7 +4950,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cela supprimera définitivement toutes vos entrées et votre clé de chiffrement sur tous vos appareils. Cette action est irréversible."
+            "value" : "Cela supprimera définitivement toutes vos fiches et votre clé de chiffrement sur tous vos appareils. Cette action est irréversible."
           }
         },
         "it" : {
@@ -5078,7 +5078,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "À utiliser uniquement si le problème persiste et que vous souhaitez repartir de zéro. Cela supprimera définitivement toutes les entrées sur tous vos appareils."
+            "value" : "À utiliser uniquement si le problème persiste et que vous souhaitez repartir de zéro. Cela supprimera définitivement toutes les fiches sur tous vos appareils."
           }
         },
         "it" : {
@@ -7638,7 +7638,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Impossible de générer le QR code.\nAssurez-vous que l'entrée est bien enregistrée."
+            "value" : "Impossible de générer le QR code.\nAssurez-vous que la fiche est bien enregistrée."
           }
         },
         "it" : {
@@ -8342,7 +8342,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Partager l'entrée"
+            "value" : "Partager la fiche"
           }
         },
         "it" : {
