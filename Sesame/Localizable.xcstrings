@@ -1089,6 +1089,70 @@
         }
       }
     },
+    "action.copy_coordinates" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "نسخ الإحداثيات"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Koordinaten kopieren"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copy Coordinates"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copiar coordenadas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copier les coordonnées"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copia coordinate"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "座標をコピー"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "좌표 복사"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "复制坐标"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "複製座標"
+          }
+        }
+      }
+    },
     "action.delete" : {
       "localizations" : {
         "ar" : {
@@ -5590,7 +5654,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Indications une fois à l'intérieur. Apparaîtra dans les notifications."
+            "value" : "Indications une fois à l'intérieur. Affichés dans les notifications."
           }
         },
         "it" : {

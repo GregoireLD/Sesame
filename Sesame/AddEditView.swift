@@ -228,17 +228,18 @@ struct AddEditView: View {
     private var codeSection: some View {
         Section {
             HStack {
-                if showingCode {
-                    TextField(String(localized: "code.placeholder"), text: $code)
-                        .autocorrectionDisabled()
-                        .autocapitalization(.none)
-                        .textContentType(.oneTimeCode)
-                        .id("code-visible")
-                } else {
-                    SecureField(String(localized: "code.placeholder"), text: $code)
-                        .textContentType(.oneTimeCode)
-                        .id("code-hidden")
-                }
+                TextField(String(localized: "code.placeholder"), text: $code)
+                    .autocorrectionDisabled()
+                    .autocapitalization(.none)
+                    .textContentType(.oneTimeCode)
+                    .opacity(!showingCode && !code.isEmpty ? 0 : 1)
+                    .overlay(alignment: .leading) {
+                        if !showingCode && !code.isEmpty {
+                            Text(String(repeating: "•", count: code.count))
+                                .foregroundStyle(.primary)
+                                .allowsHitTesting(false)
+                        }
+                    }
                 Spacer()
                 Button {
                     showingCode.toggle()

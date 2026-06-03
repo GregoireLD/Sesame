@@ -110,7 +110,7 @@ struct EntryDetailView: View {
                         }
                     } else if let plain = plainCode {
                         HStack {
-                            Text(showingCode ? plain : String(repeating: "•", count: plain.count))
+                            Text(showingCode ? plain : String(repeating: "•", count: 6))
                                 .font(.title3)
                                 .fontWeight(.medium)
                                 .monospaced()
@@ -183,6 +183,15 @@ struct EntryDetailView: View {
                                 UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                             } label: {
                                 Label("action.copy", systemImage: "doc.on.doc")
+                            }
+                            if let lat = accessCode.decryptedLatitude,
+                               let lon = accessCode.decryptedLongitude {
+                                Button {
+                                    UIPasteboard.general.string = String(format: "%.6f, %.6f", lat, lon)
+                                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                                } label: {
+                                    Label("action.copy_coordinates", systemImage: "location")
+                                }
                             }
                             if !isUnresolved {
                                 Button {
