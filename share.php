@@ -1,18 +1,18 @@
 <?php
 $langs = [
-  'fr' => ['title' => 'Sesame — Code d\'accès partagé', 'desc' => 'Quelqu\'un a partagé un code d\'accès avec vous. Ouvrez pour le voir.', 'image' => 'https://sesame-app.com/images/sesame_social_fr.png'],
-  'de' => ['title' => 'Sesame — Geteilter Zugangscode', 'desc' => 'Jemand hat einen Zugangscode mit dir geteilt. Öffnen, um ihn anzuzeigen.', 'image' => 'https://sesame-app.com/images/sesame_social_de.png'],
-  'es' => ['title' => 'Sesame — Código de acceso compartido', 'desc' => 'Alguien ha compartido un código de acceso contigo. Ábrelo para verlo.', 'image' => 'https://sesame-app.com/images/sesame_social_es.png'],
-  'it' => ['title' => 'Sesame — Codice di accesso condiviso', 'desc' => 'Qualcuno ha condiviso un codice di accesso con te. Aprilo per vederlo.', 'image' => 'https://sesame-app.com/images/sesame_social_it.png'],
-  'ja' => ['title' => 'Sesame — アクセスコードが共有されました', 'desc' => 'アクセスコードが共有されました。開いて確認してください。', 'image' => 'https://sesame-app.com/images/sesame_social_ja.png'],
-  'ko' => ['title' => 'Sesame — 출입 코드가 공유되었습니다', 'desc' => '누군가 출입 코드를 공유했습니다. 열어서 확인하세요.', 'image' => 'https://sesame-app.com/images/sesame_social_ko.png'],
-  'zh' => ['title' => 'Sesame — 共享的门禁代码', 'desc' => '有人与您共享了门禁代码。打开查看。', 'image' => 'https://sesame-app.com/images/sesame_social_zh.png'],
-  'ar' => ['title' => 'Sesame — رمز دخول مشترك', 'desc' => 'شارك شخص ما رمز دخول معك. افتحه لرؤيته.', 'image' => 'https://sesame-app.com/images/sesame_social_ar.png'],
+  'fr' => ['title' => 'Sesame — Code d\'accès partagé', 'desc' => 'Quelqu\'un a partagé un code d\'accès avec vous. Ouvrez pour le voir.', 'image' => 'https://sesame-app.com/images/sesame_newcode_fr.png'],
+  'de' => ['title' => 'Sesame — Geteilter Zugangscode', 'desc' => 'Jemand hat einen Zugangscode mit dir geteilt. Öffnen, um ihn anzuzeigen.', 'image' => 'https://sesame-app.com/images/sesame_newcode_de.png'],
+  'es' => ['title' => 'Sesame — Código de acceso compartido', 'desc' => 'Alguien ha compartido un código de acceso contigo. Ábrelo para verlo.', 'image' => 'https://sesame-app.com/images/sesame_newcode_es.png'],
+  'it' => ['title' => 'Sesame — Codice di accesso condiviso', 'desc' => 'Qualcuno ha condiviso un codice di accesso con te. Aprilo per vederlo.', 'image' => 'https://sesame-app.com/images/sesame_newcode_it.png'],
+  'ja' => ['title' => 'Sesame — アクセスコードが共有されました', 'desc' => 'アクセスコードが共有されました。開いて確認してください。', 'image' => 'https://sesame-app.com/images/sesame_newcode_ja.png'],
+  'ko' => ['title' => 'Sesame — 출입 코드가 공유되었습니다', 'desc' => '누군가 출입 코드를 공유했습니다. 열어서 확인하세요.', 'image' => 'https://sesame-app.com/images/sesame_newcode_ko.png'],
+  'zh' => ['title' => 'Sesame — 共享的门禁代码', 'desc' => '有人与您共享了门禁代码。打开查看。', 'image' => 'https://sesame-app.com/images/sesame_newcode_zh.png'],
+  'ar' => ['title' => 'Sesame — رمز دخول مشترك', 'desc' => 'شارك شخص ما رمز دخول معك. افتحه لرؤيته.', 'image' => 'https://sesame-app.com/images/sesame_newcode_ar.png'],
 ];
 
 $title = 'Sesame — Shared Access Code';
 $desc  = 'Someone shared an access code with you. Open to view it.';
-$ogimage = 'https://sesame-app.com/images/sesame_social_en.png';
+$ogimage = 'https://sesame-app.com/images/sesame_newcode_en.png';
 $url   = 'https://sesame-app.com/share';
 
 $accept = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '';
