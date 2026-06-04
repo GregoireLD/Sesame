@@ -318,6 +318,7 @@ foreach ($langs as $code => $strings) {
 
     .btn-secondary {
       display: flex; align-items: center; justify-content: center; gap: 8px;
+      text-align: center;
       background: var(--btn-secondary-bg); color: var(--btn-secondary-text);
       font-family: 'DM Sans', sans-serif; font-weight: 400; font-size: 13px;
       padding: 12px 20px; border-radius: var(--radius-sm);
@@ -371,7 +372,8 @@ foreach ($langs as $code => $strings) {
 <div class="card" id="card"></div>
 
 <script>
-  const APP_STORE_URL = 'https://apps.apple.com/app/sesame';
+  const APP_STORE_URL = 'https://apps.apple.com/fr/app/sesame-access-codes/id6760468434';
+  const PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=com.duval.sesamelite';
   const HOMEPAGE_URL  = 'https://sesame-app.com/';
   const LANGS = ['en','fr','de','es','it','ja','ko','zh-hans','zh-hant','ar'];
   const RTL_LANGS = ['ar'];
@@ -451,6 +453,18 @@ foreach ($langs as $code => $strings) {
       ar: 'إصدار iOS قريباً'
     },
     download_android: {
+      en: 'Don\'t have Sesame? Download on the Google Play Store',
+      fr: 'Pas encore Sesame ? Télécharger sur le Google Play Store',
+      de: 'Sesame noch nicht? Im Google Play laden',
+      es: '¿Sin Sesame? Descargar en el Google Play Store',
+      it: 'Non hai Sesame? Scarica dal Google Play Store',
+      ja: 'Sesameをお持ちでない方はGoogle Play Storeから',
+      ko: 'Sesame이 없으신가요? Google Play Store에서 다운로드',
+      'zh-hans': '没有 Sesame？在 Google Play Store 下载',
+      'zh-hant': '沒有 Sesame？在 Google Play Store 下載',
+      ar: 'ليس لديك Sesame؟ حمّله من Google Play Store'
+    },
+    download_android_soon: {
       en: 'Android version coming soon',
       fr: 'Version Android bientôt disponible',
       de: 'Android-Version demnächst verfügbar',
@@ -592,6 +606,7 @@ foreach ($langs as $code => $strings) {
   const iconInfo = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>`;
   const iconMsg  = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`;
   const iconApple = `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>`;
+  const iconAndroid = `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.523 15.341 19 17.006a.75.75 0 1 1-1.14.976l-1.55-1.812A7.955 7.955 0 0 1 12 17a7.955 7.955 0 0 1-4.31-1.83L6.14 16.982A.75.75 0 0 1 5 16.006l1.477-1.665A7.975 7.975 0 0 1 4 9h16a7.975 7.975 0 0 1-2.477 6.341zM8.5 11a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm7 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2zM7.319 4.338 6.14 3.018A.75.75 0 1 1 7.28 2.04l1.308 1.44A7.957 7.957 0 0 1 12 3c1.12 0 2.185.23 3.15.645L16.72 2.04a.75.75 0 1 1 1.14.978l-1.179 1.32A7.992 7.992 0 0 1 20 8H4a7.992 7.992 0 0 1 3.319-3.662z"/></svg>`;
 
   // ── Helpers ──────────────────────────────────────────────
   function esc(str) {
@@ -628,7 +643,11 @@ foreach ($langs as $code => $strings) {
   }
 
   function parseFragment() {
-    const raw = window.location.hash.slice(1);
+    let raw = window.location.hash.slice(1);
+    if (!raw) return null;
+
+    // Strip leading/trailing whitespace, %20, and periods added by copy-paste or auto-punctuation
+    raw = raw.replace(/^(?:%20|[\s.])+/i, '').replace(/(?:%20|[\s.])+$/i, '');
     if (!raw) return null;
 
     // Try base64url decode first; fall back to plain
@@ -703,14 +722,9 @@ foreach ($langs as $code => $strings) {
     const btnLabel = codeRevealed ? t('hide') : t('show');
     const platform = getPlatform();
     const downloadBtn = platform === 'android'
-      ? `<a href="#" class="btn-secondary" style="opacity:0.5;pointer-events:none;cursor:default;">
-          ${t('download_android')}
-        </a>`
-      : `<a href="#" class="btn-secondary" style="opacity:0.5;pointer-events:none;cursor:default;">
-          ${t('download_ios_soon')}
-        </a>`;
-        
-    //<a href="${APP_STORE_URL}" class="btn-secondary">${t('download_ios')}</a>`;
+      ? `<a href="#" class="btn-secondary" style="opacity:0.5;pointer-events:none;cursor:default;">${iconAndroid} ${t('download_android_soon')}</a>`
+      : `<a href="${APP_STORE_URL}" class="btn-secondary">${iconApple} ${t('download_ios')}</a>`;
+
 
     let extraFields = '';
     if (params.details) {
@@ -774,13 +788,17 @@ foreach ($langs as $code => $strings) {
   }
 
   function renderUpdate() {
+    const platform = getPlatform();
+    const updateBtn = platform === 'android'
+      ? `<a href="${PLAY_STORE_URL}" class="btn-primary" style="display:inline-flex;width:auto;padding:12px 28px;">${iconAndroid} ${t('update_sesame')}</a>`
+      : `<a href="${APP_STORE_URL}" class="btn-primary" style="display:inline-flex;width:auto;padding:12px 28px;">${iconApple} ${t('update_sesame')}</a>`;
     document.getElementById('card').innerHTML = `
       ${renderHeader()}
       <div class="error-state">
         <div class="error-icon">⬆️</div>
         <div class="error-title">${t('update_title')}</div>
         <div class="error-body">${t('update_body')}</div>
-        <a href="${APP_STORE_URL}" class="btn-primary" style="display:inline-flex;width:auto;padding:12px 28px;">${iconApple} ${t('update_sesame')}</a>
+        ${updateBtn}
       </div>`;
   }
 

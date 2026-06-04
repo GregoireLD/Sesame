@@ -406,8 +406,8 @@ struct AddEditView: View {
             showingClipboardError = true
             return
         }
-        string = string.trimmingCharacters(in: .whitespacesAndNewlines)
-        while string.hasSuffix(".") { string = String(string.dropLast()) }
+        string = string.replacingOccurrences(of: #"^(?:%20|[\s.])+"#, with: "", options: .regularExpression)
+        string = string.replacingOccurrences(of: #"(?:%20|[\s.])+$"#, with: "", options: .regularExpression)
         guard let url = URL(string: string),
               let parsed = ImportExport.parse(url: url) else {
             showingClipboardError = true
