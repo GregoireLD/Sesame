@@ -105,11 +105,7 @@ struct AddEditView: View {
             }
             // Track unsaved changes on any field edit
             .onChange(of: address) { oldValue, newValue in
-                guard newValue != oldValue else { return }
-                if isPopulating {
-                    isPopulating = false
-                    return
-                }
+                guard newValue != oldValue, addressFocused else { return }
                 geocodingSuccess = false
                 geocodingError = nil
                 latitude = nil
@@ -557,8 +553,8 @@ struct AddEditView: View {
                     latitude = coordinate.latitude
                     longitude = coordinate.longitude
                     geocodingSuccess = true
+                    isPopulating = false
                     isGeocoding = false
-                    // isPopulating is cleared by onChange(of: address) after the batch completes
                 }
             } catch {
                 await MainActor.run {
@@ -616,6 +612,7 @@ struct AddEditView: View {
                     latitude = coordinate.latitude
                     longitude = coordinate.longitude
                     geocodingSuccess = true
+                    isPopulating = false
                     isGeocoding = false
                 }
             } catch {
