@@ -18,11 +18,11 @@
 		</dict>
 	</array>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>NSLocationWhenInUseUsageDescription</string>
+	<string>Sesame uses your location to sort your saved entries by distance, so the place you're closest to appears at the top of your list.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>NSLocationAlwaysAndWhenInUseUsageDescription</string>
+	<string>Sesame uses your location in the background to detect when you arrive at a saved place and notify you with its access code — for example, showing your building code as you reach the front door, even when the app is closed.</string>
 	<key>NSUserNotificationsUsageDescription</key>
-	<string>NSUserNotificationsUsageDescription</string>
+	<string>Sesame sends you a notification displaying the access code when you arrive at a saved location.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
