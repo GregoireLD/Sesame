@@ -105,9 +105,11 @@ struct AddEditView: View {
             }
             // Track unsaved changes on any field edit
             .onChange(of: address) { oldValue, newValue in
-                // Only invalidate geocoding if the address actually changed
-                // and we're not in the middle of a programmatic population
-                guard !isPopulating, newValue != oldValue else { return }
+                guard newValue != oldValue else { return }
+                if isPopulating {
+                    isPopulating = false
+                    return
+                }
                 geocodingSuccess = false
                 geocodingError = nil
                 latitude = nil
@@ -524,8 +526,8 @@ struct AddEditView: View {
 
     private func selectSuggestion(_ suggestion: MKLocalSearchCompletion) {
         addressCompleter.clear()
-        addressFocused = false
         isGeocoding = true
+        addressFocused = false
         geocodingError = nil
         geocodingSuccess = false
         latitude = nil
@@ -555,8 +557,8 @@ struct AddEditView: View {
                     latitude = coordinate.latitude
                     longitude = coordinate.longitude
                     geocodingSuccess = true
-                    isPopulating = false
                     isGeocoding = false
+                    // isPopulating is cleared by onChange(of: address) after the batch completes
                 }
             } catch {
                 await MainActor.run {
@@ -614,7 +616,6 @@ struct AddEditView: View {
                     latitude = coordinate.latitude
                     longitude = coordinate.longitude
                     geocodingSuccess = true
-                    isPopulating = false
                     isGeocoding = false
                 }
             } catch {
