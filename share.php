@@ -673,11 +673,15 @@ foreach ($langs as $code => $strings) {
       if (key) params[key] = value;
     });
 
-    return Object.keys(params).length ? params : null;
+    if (!Object.keys(params).length) return null;
+    params._isBase64 = !!(decoded && decoded.includes('='));
+    if (params._isBase64) params._raw = raw;
+    return params;
   }
 
   function buildSesameURL(params) {
-    const items = [['v','1'], ['label', params.label]];
+    if (params._isBase64) return `sesame://import#${params._raw}`;
+    const items = [['v', '1'], ['label', params.label]];
     if (params.address) items.push(['address', params.address]);
     if (params.code)    items.push(['code',    params.code]);
     if (params.lat)     items.push(['lat',     params.lat]);
@@ -685,8 +689,8 @@ foreach ($langs as $code => $strings) {
     if (params.radius)  items.push(['radius',  params.radius]);
     if (params.details) items.push(['details', params.details]);
     if (params.comment) items.push(['comment', params.comment]);
-    const qs = items.map(([k,v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`).join('&');
-    return `sesame://import?${qs}`;
+    const qs = items.map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`).join('&');
+    return `sesame://import#${qs}`;
   }
 
   // ── Render ───────────────────────────────────────────────
