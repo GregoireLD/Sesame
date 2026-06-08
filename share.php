@@ -257,28 +257,40 @@ foreach ($langs as $code => $strings) {
         gap: 12px;
     }
 
-    .code-value {
+    .code-wrap {
+        position: relative;
+        flex: 1;
+        min-width: 0;
+    }
+
+    .code-sizer {
+        display: block;
+        opacity: 0;
+        pointer-events: none;
+        user-select: none;
+        -webkit-user-select: none;
+        font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
+        font-size: 13px;
+        font-weight: 500;
+        line-height: 1.4;
+        word-break: break-all;
+    }
+
+    .code-overlay {
+        position: absolute;
+        top: 0; left: 0; right: 0;
         font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
         font-size: 13px;
         font-weight: 500;
         color: var(--gold);
-        line-height: 1;
-        display: inline-block;
-        transition: color 0.15s ease, background 0.15s ease;
-        padding: 2px 6px;
-        border-radius: 5px;
         word-break: break-all;
-        min-width: 0;
-        flex: 1;
+        line-height: 1.4;
     }
 
-    .code-value.hidden {
-        color: transparent;
-        background: rgba(201,168,76,0.18);
-        border-radius: 5px;
-        user-select: none;
-        -webkit-user-select: none;
-        filter: blur(10px);
+    .code-overlay.is-masked {
+        font-size: 18px;
+        letter-spacing: 0.2em;
+        line-height: 1;
     }
 
     .reveal-btn {
@@ -721,9 +733,6 @@ foreach ($langs as $code => $strings) {
 
   function renderEntry(params) {
     const sesameURL = buildSesameURL(params);
-    const codeDisplay = codeRevealed ? esc(params.code) : '••••••';
-    const codeSpacing = codeRevealed ? '0.12em' : '0.2em';
-    const btnLabel = codeRevealed ? t('hide') : t('show');
     const platform = getPlatform();
     const downloadBtn = platform === 'android'
       ? `<a href="#" class="btn-secondary" style="opacity:0.5;pointer-events:none;cursor:default;">${iconAndroid} ${t('download_android_soon')}</a>`
@@ -758,7 +767,10 @@ foreach ($langs as $code => $strings) {
         ${params.address ? '<div class="divider"></div>' : ''}
         <div class="code-label">${t('access_code')}</div>
         <div class="code-display">
-          <span class="code-value hidden" id="code-value">${esc(params.code)}</span>
+          <div class="code-wrap">
+            <span class="code-sizer">${esc(params.code)}</span>
+            <span class="code-overlay is-masked" id="code-value">••••••</span>
+          </div>
           <button class="reveal-btn" id="reveal-btn" onclick="toggleCode()">${t('show')}</button>
         </div>
       ` : `
@@ -778,6 +790,14 @@ foreach ($langs as $code => $strings) {
         ${t('note')}<br>
         <a href="${HOMEPAGE_URL}">${t('learn_more')}</a>
       </p>`;
+
+    // Restore revealed state after re-render (e.g. language switch)
+    if (codeRevealed && params.code) {
+      const overlay = document.getElementById('code-value');
+      overlay.classList.remove('is-masked');
+      overlay.textContent = params.code;
+      document.getElementById('reveal-btn').textContent = t('hide');
+    }
   }
 
   function renderError() {
@@ -808,13 +828,15 @@ foreach ($langs as $code => $strings) {
 
   function toggleCode() {
       codeRevealed = !codeRevealed;
-      const display = document.getElementById('code-value');
+      const overlay = document.getElementById('code-value');
       const btn = document.getElementById('reveal-btn');
       if (codeRevealed) {
-          display.classList.remove('hidden');
+          overlay.classList.remove('is-masked');
+          overlay.textContent = currentParams.code;
           btn.textContent = t('hide');
       } else {
-          display.classList.add('hidden');
+          overlay.classList.add('is-masked');
+          overlay.textContent = '••••••';
           btn.textContent = t('show');
       }
   }
