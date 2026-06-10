@@ -24,6 +24,10 @@ foreach ($langs as $code => $strings) {
     break;
   }
 }
+
+// connect-src 'none' is the load-bearing line: structurally forbids the page
+// from sending the URL fragment (which contains the access code) over the network.
+header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' https://sesame-app.com data:; connect-src 'none'");
 ?>
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
