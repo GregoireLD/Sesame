@@ -116,7 +116,13 @@ struct ImportExport {
         // Build the parameter string
         var fragmentComponents = URLComponents()
         fragmentComponents.queryItems = items
-        guard let queryString = fragmentComponents.percentEncodedQuery else { return nil }
+        guard var queryString = fragmentComponents.percentEncodedQuery else { return nil }
+        // URLComponents leaves '+' unescaped (it is legal in an RFC 3986 query),
+        // but form-style parsers decode '+' as a space — Android's URLDecoder
+        // among them. Escape it so the payload is unambiguous everywhere.
+        // Safe: '+' can never appear inside a %XX escape sequence, and the CRC
+        // below is computed over the escaped string, i.e. the actual wire bytes.
+        queryString = queryString.replacingOccurrences(of: "+", with: "%2B")
 
         // Append CRC32, then encode
         let queryStringWithCRC = queryString + "&crc32=\(computeCRC32(queryString))"
