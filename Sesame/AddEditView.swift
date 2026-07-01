@@ -38,6 +38,7 @@ struct AddEditView: View {
     @State private var keyUnavailable: Bool = false
     @State private var showingUnresolvedWarning: Bool = false
     @State private var showingClipboardError: Bool = false
+    @State private var showingClipboardEmptyError: Bool = false
     @State private var showingClipboardOverwriteWarning: Bool = false
     @State private var pendingClipboardImport: ParsedImport? = nil
     @State private var showingDuplicateWarning: Bool = false
@@ -151,6 +152,14 @@ struct AddEditView: View {
                 Button(String(localized: "action.ok"), role: .cancel) { }
             } message: {
                 Text("clipboard.error.message")
+            }
+            .alert(
+                String(localized: "import.empty.title"),
+                isPresented: $showingClipboardEmptyError
+            ) {
+                Button(String(localized: "action.ok"), role: .cancel) { }
+            } message: {
+                Text("import.empty.message")
             }
             // Deletion alert
             .alert(
@@ -406,9 +415,16 @@ struct AddEditView: View {
         }
         string = string.replacingOccurrences(of: #"^(?:%20|[\s.])+"#, with: "", options: .regularExpression)
         string = string.replacingOccurrences(of: #"(?:%20|[\s.])+$"#, with: "", options: .regularExpression)
-        guard let url = URL(string: string),
-              let parsed = ImportExport.parse(url: url) else {
+        guard let url = URL(string: string) else {
             showingClipboardError = true
+            return
+        }
+        guard let parsed = ImportExport.parse(url: url) else {
+            if ImportExport.isEmptyImport(url) {
+                showingClipboardEmptyError = true
+            } else {
+                showingClipboardError = true
+            }
             return
         }
 

@@ -106,6 +106,12 @@ private struct UnknownImportView: View {
     let url: URL
     @Environment(\.dismiss) private var dismiss
 
+    private var isEmpty: Bool {
+        let hasFragment = url.fragment.map { !$0.isEmpty } ?? false
+        let hasQuery = url.query.map { !$0.isEmpty } ?? false
+        return !hasFragment && !hasQuery
+    }
+
     private var isFutureVersion: Bool {
         guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false) else { return false }
         let rawSource: String?
@@ -135,23 +141,28 @@ private struct UnknownImportView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 24) {
-                Image(systemName: isFutureVersion
-                    ? "arrow.up.circle.fill"
+                Image(systemName: isEmpty
+                    ? "link.slash"
+                    : isFutureVersion ? "arrow.up.circle.fill"
                     : "exclamationmark.triangle.fill"
                 )
                 .font(.system(size: 60))
-                .foregroundStyle(isFutureVersion ? .blue : .orange)
+                .foregroundStyle(isEmpty ? .secondary
+                    : isFutureVersion ? .blue
+                    : .orange)
 
-                Text(isFutureVersion
-                    ? String(localized: "import.future_version.title")
+                Text(isEmpty
+                    ? String(localized: "import.empty.title")
+                    : isFutureVersion ? String(localized: "import.future_version.title")
                     : String(localized: "import.malformed.title")
                 )
                 .font(.title2)
                 .fontWeight(.semibold)
                 .multilineTextAlignment(.center)
 
-                Text(isFutureVersion
-                    ? String(localized: "import.future_version.message")
+                Text(isEmpty
+                    ? String(localized: "import.empty.message")
+                    : isFutureVersion ? String(localized: "import.future_version.message")
                     : String(localized: "import.malformed.message")
                 )
                 .foregroundStyle(.secondary)

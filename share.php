@@ -511,6 +511,24 @@ header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-i
       ko: 'Sesame 더 알아보기', 'zh-hans': '了解更多关于 Sesame',
       'zh-hant': '了解更多關於 Sesame', ar: 'اعرف المزيد عن Sesame'
     },
+    empty_title: {
+      en: 'Entry data missing', fr: 'Données manquantes', de: 'Eintragsdaten fehlen',
+      es: 'Datos de entrada no encontrados', it: 'Dati voce mancanti',
+      ja: 'データが欠落しています', ko: '항목 데이터 없음',
+      'zh-hans': '条目数据缺失', 'zh-hant': '條目資料缺失', ar: 'بيانات الإدخال مفقودة'
+    },
+    empty_body: {
+      en: 'This link has no entry data. Some apps (like Facebook Messenger) remove parts of links before sending — ask the sender to try another sharing method.',
+      fr: 'Ce lien ne contient pas de données d\'entrée. Certaines applications (comme Facebook Messenger) suppriment des parties des liens avant l\'envoi — demandez à l\'expéditeur d\'essayer une autre méthode de partage.',
+      de: 'Dieser Link enthält keine Eintragsdaten. Einige Apps (wie Facebook Messenger) entfernen Teile von Links vor dem Versenden — bitte den Absender, eine andere Freigabemethode zu versuchen.',
+      es: 'Este enlace no tiene datos de entrada. Algunas apps (como Facebook Messenger) eliminan partes de los enlaces antes de enviarlos — pide al remitente que pruebe otro método de compartir.',
+      it: 'Questo link non ha dati voce. Alcune app (come Facebook Messenger) rimuovono parti dei link prima dell\'invio — chiedi al mittente di provare un altro metodo di condivisione.',
+      ja: 'このリンクにはエントリーデータがありません。一部のアプリ（Facebook Messengerなど）はリンクの一部を送信前に削除します。別の共有方法を試すよう送信者にお願いしてください。',
+      ko: '이 링크에 항목 데이터가 없습니다. 일부 앱(Facebook Messenger 등)은 보내기 전에 링크의 일부를 제거합니다. 발신자에게 다른 공유 방법을 시도해 보도록 요청하세요.',
+      'zh-hans': '此链接没有条目数据。某些应用（如 Facebook Messenger）在发送前会删除链接的部分内容——请发送者尝试其他分享方式。',
+      'zh-hant': '此連結沒有條目資料。某些應用程式（如 Facebook Messenger）在發送前會刪除連結的部分內容——請發送者嘗試其他分享方式。',
+      ar: 'هذا الرابط لا يحتوي على بيانات إدخال. بعض التطبيقات (مثل Facebook Messenger) تزيل أجزاء من الروابط قبل الإرسال — اطلب من المُرسل تجربة طريقة مشاركة أخرى.'
+    },
     error_title: {
       en: 'No entry found', fr: 'Aucune entrée trouvée', de: 'Kein Eintrag gefunden',
       es: 'No se encontró ninguna entrada', it: 'Nessuna voce trovata',
@@ -711,7 +729,7 @@ header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-i
 
   // ── Render ───────────────────────────────────────────────
   let currentParams = null;
-  let currentMode = 'entry'; // 'entry' | 'error' | 'update'
+  let currentMode = 'entry'; // 'entry' | 'error' | 'update' | 'empty'
   let codeRevealed = false;
 
   function render() {
@@ -719,6 +737,8 @@ header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-i
       renderEntry(currentParams);
     } else if (currentMode === 'update') {
       renderUpdate();
+    } else if (currentMode === 'empty') {
+      renderEmpty();
     } else {
       renderError();
     }
@@ -815,6 +835,17 @@ header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-i
       </div>`;
   }
 
+  function renderEmpty() {
+    document.getElementById('card').innerHTML = `
+      ${renderHeader()}
+      <div class="error-state">
+        <div class="error-icon">✂️</div>
+        <div class="error-title">${t('empty_title')}</div>
+        <div class="error-body">${t('empty_body')}</div>
+        <a href="${HOMEPAGE_URL}" class="btn-primary" style="display:inline-flex;width:auto;padding:12px 28px;">${t('go_to_sesame')}</a>
+      </div>`;
+  }
+
   function renderUpdate() {
     const platform = getPlatform();
     const updateBtn = platform === 'android'
@@ -860,13 +891,14 @@ header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-i
 
     // Parse fragment
     const params = parseFragment();
+    const hasFragment = window.location.hash.length > 1;
 
-    if (!params) {
+    if (!hasFragment) {
+      currentMode = 'empty';
+    } else if (!params) {
       window.location.replace(HOMEPAGE_URL);
       return;
-    }
-
-    if (!params.label) {
+    } else if (!params.label) {
       currentMode = 'error';
     } else if (params.v && params.v !== '1') {
       currentMode = 'update';
@@ -877,6 +909,13 @@ header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-i
 
     window.addEventListener('hashchange', () => {
       codeRevealed = false;
+      const hasFragment = window.location.hash.length > 1;
+      if (!hasFragment) {
+        currentMode = 'empty';
+        currentParams = null;
+        render();
+        return;
+      }
       const params = parseFragment();
       if (!params) {
         window.location.replace(HOMEPAGE_URL);

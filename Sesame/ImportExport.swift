@@ -234,6 +234,15 @@ struct ImportExport {
         )
     }
     
+    static func isEmptyImport(_ url: URL) -> Bool {
+        let isRecognized = (url.scheme == "sesame" && url.host == "import") ||
+                           (url.scheme == "https" && url.host == "sesame-app.com" && url.path == "/share")
+        guard isRecognized else { return false }
+        let hasFragment = url.fragment.map { !$0.isEmpty } ?? false
+        let hasQuery = url.query.map { !$0.isEmpty } ?? false
+        return !hasFragment && !hasQuery
+    }
+
     // MARK: - Tools
 
     private static let crc32Table: [UInt32] = (0..<256).map { i -> UInt32 in

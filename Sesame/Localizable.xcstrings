@@ -4281,6 +4281,134 @@
         }
       }
     },
+    "import.empty.message" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "هذا الرابط لا يحتوي على بيانات إدخال. بعض التطبيقات تحذف أجزاء من الروابط قبل الإرسال — اطلب من المُرسل تجربة طريقة مشاركة أخرى."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieser Link enthält keine Eintragsdaten. Einige Apps entfernen Teile von Links vor dem Versenden — bitte den Absender, eine andere Freigabemethode zu versuchen."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This link contains no entry data. Some apps strip parts of links before sending — ask the sender to try another sharing method."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este enlace no contiene datos de entrada. Algunas apps eliminan partes de los enlaces antes de enviarlos — pide al remitente que pruebe otro método de compartir."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce lien ne contient pas de données d'entrée. Certaines applications suppriment des parties des liens avant l'envoi — demandez à l'expéditeur d'essayer une autre méthode de partage."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Questo link non contiene dati voce. Alcune app rimuovono parti dei link prima dell'invio — chiedi al mittente di provare un altro metodo di condivisione."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このリンクにはエントリーデータがありません。一部のアプリはリンクの一部を送信前に削除します。別の共有方法を試すよう送信者にお願いしてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 링크에 항목 데이터가 없습니다. 일부 앱은 보내기 전에 링크의 일부를 제거합니다. 발신자에게 다른 공유 방법을 시도해 보도록 요청하세요."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此链接没有条目数据。某些应用在发送前会删除链接的部分内容——请发送者尝试其他分享方式。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此連結沒有條目資料。某些應用程式在發送前會刪除連結的部分內容——請發送者嘗試其他分享方式。"
+          }
+        }
+      }
+    },
+    "import.empty.title" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "رابط فارغ"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leerer Link"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empty Link"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enlace vacío"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lien vide"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Link vuoto"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "空のリンク"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "빈 링크"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "空链接"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "空連結"
+          }
+        }
+      }
+    },
     "import.future_version.message" : {
       "localizations" : {
         "ar" : {
