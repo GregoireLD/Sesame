@@ -147,9 +147,9 @@ private struct UnknownImportView: View {
                     : "exclamationmark.triangle.fill"
                 )
                 .font(.system(size: 60))
-                .foregroundStyle(isEmpty ? .secondary
-                    : isFutureVersion ? .blue
-                    : .orange)
+                .foregroundStyle(isEmpty ? AnyShapeStyle(.secondary)
+                    : isFutureVersion ? AnyShapeStyle(Color.blue)
+                    : AnyShapeStyle(Color.orange))
 
                 Text(isEmpty
                     ? String(localized: "import.empty.title")
