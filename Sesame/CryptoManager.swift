@@ -31,6 +31,11 @@ struct CryptoManager {
     nonisolated private static let currentVersion = "v1"
     nonisolated private static let separator = ":"
 
+    // In-memory key cache — avoids a synchronous XPC round-trip to securityd on
+    // every decrypt call. Benign write race: both threads would write the same
+    // value, and the Keychain remains the authoritative persistent store.
+    nonisolated(unsafe) private static var cachedKey: SymmetricKey? = nil
+
     // MARK: - Key Management
 
     /// Read-only key fetch. Returns nil if the key hasn't arrived yet (e.g. iCloud Keychain
@@ -49,12 +54,14 @@ struct CryptoManager {
         let newKey = SymmetricKey(size: .bits256)
         let keyData = newKey.withUnsafeBytes { Data($0) }
         if storeKey(keyData) {
+            cachedKey = newKey
             return newKey
         }
         return nil
     }
 
     private static func loadKey() -> SymmetricKey? {
+        if let key = cachedKey { return key }
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrAccount as String: keyTag,
@@ -66,10 +73,13 @@ struct CryptoManager {
         let status = SecItemCopyMatching(query as CFDictionary, &result)
         guard status == errSecSuccess,
               let keyData = result as? Data else { return nil }
-        return SymmetricKey(data: keyData)
+        let key = SymmetricKey(data: keyData)
+        cachedKey = key
+        return key
     }
 
     static func deleteKey() {
+        cachedKey = nil
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrAccount as String: keyTag,
